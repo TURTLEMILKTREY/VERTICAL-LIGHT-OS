@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Enhanced Goal Parser Configuration Schema",
+  "description": "Complete schema for Goal Parser configuration with comprehensive type safety and validation",
+  "type": "object",
+  "properties": {
+    "processing": {
+      "type": "object",
+      "description": "Processing configuration for goal parsing operations",
+      "properties": {
+        "max_concurrent_requests": {
+          "type": "integer", 
+          "minimum": 1, 
+          "maximum": 100,
+          "default": 10,
+          "description": "Maximum number of concurrent parsing requests"
+        },
+        "timeout_seconds": {
+          "type": "number", 
+          "minimum": 1, 
+          "maximum": 300,
+          "default": 30,
+          "description": "Request timeout in seconds"
+        },
+        "retry_attempts": {
+          "type": "integer", 
+          "minimum": 0, 
+          "maximum": 5,
+          "default": 3,
+          "description": "Number of retry attempts for failed requests"
+        },
+        "batch_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Batch size for bulk processing operations"
+        },
+        "max_text_length": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 50000,
+          "default": 10000,
+          "description": "Maximum length of input text for processing"
+        }
+      },
+      "required": ["max_concurrent_requests", "timeout_seconds", "retry_attempts"],
+      "additionalProperties": false
+    },
+    "intelligence": {
+      "type": "object",
+      "description": "AI intelligence thresholds and learning parameters",
+      "properties": {
+        "semantic_threshold": {
+          "type": "number", 
+          "minimum": 0, 
+          "maximum": 1,
+          "default": 0.75,
+          "description": "Minimum semantic similarity threshold"
+        },
+        "confidence_threshold": {
+          "type": "number", 
+          "minimum": 0, 
+          "maximum": 1,
+          "default": 0.80,
+          "description": "Minimum confidence score for goal classification"
+        },
+        "learning_rate": {
+          "type": "number", 
+          "minimum": 0, 
+          "maximum": 1,
+          "default": 0.15,
+          "description": "Learning rate for adaptive algorithms"
+        },
+        "decay_factor": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.95,
+          "description": "Decay factor for historical learning weights"
+        },
+        "pattern_matching_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.70,
+          "description": "Threshold for pattern matching algorithms"
+        },
+        "adaptation_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.65,
+          "description": "Threshold for adaptive behavior triggers"
+        },
+        "sophistication_weights": {
+          "type": "object",
+          "description": "Weights for sophistication level calculation",
+          "properties": {
+            "industry_knowledge": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.4},
+            "market_awareness": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.35},
+            "technical_depth": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.25}
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["semantic_threshold", "confidence_threshold", "learning_rate"],
+      "additionalProperties": false
+    },
+    "budget_thresholds": {
+      "type": "object",
+      "description": "Budget classification and calculation thresholds",
+      "properties": {
+        "base_ranges": {
+          "type": "object",
+          "description": "Base budget ranges for different business sizes",
+          "properties": {
+            "micro": {"type": "number", "minimum": 0, "default": 500, "description": "Micro business budget threshold"},
+            "small": {"type": "number", "minimum": 0, "default": 5000, "description": "Small business budget threshold"},
+            "medium": {"type": "number", "minimum": 0, "default": 50000, "description": "Medium business budget threshold"},
+            "large": {"type": "number", "minimum": 0, "default": 500000, "description": "Large business budget threshold"},
+            "enterprise": {"type": "number", "minimum": 0, "default": 2000000, "description": "Enterprise budget threshold"}
+          },
+          "required": ["micro", "small", "medium", "large", "enterprise"],
+          "additionalProperties": false
+        },
+        "percentile_base_values": {
+          "type": "object",
+          "description": "Base values for budget percentile calculations",
+          "properties": {
+            "25": {"type": "number", "minimum": 0, "default": 1000},
+            "50": {"type": "number", "minimum": 0, "default": 10000},
+            "75": {"type": "number", "minimum": 0, "default": 100000},
+            "90": {"type": "number", "minimum": 0, "default": 500000},
+            "95": {"type": "number", "minimum": 0, "default": 1000000}
+          },
+          "required": ["25", "50", "75", "90", "95"],
+          "additionalProperties": false
+        },
+        "industry_multipliers": {
+          "type": "object",
+          "description": "Industry-specific budget multipliers",
+          "properties": {
+            "technology": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 1.5},
+            "healthcare": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 1.3},
+            "finance": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 1.4},
+            "manufacturing": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 1.2},
+            "retail": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 0.9},
+            "services": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 1.0},
+            "education": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 0.7},
+            "real_estate": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 1.2},
+            "automotive": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 1.1},
+            "entertainment": {"type": "number", "minimum": 0.1, "maximum": 5.0, "default": 1.3}
+          },
+          "patternProperties": {
+            "^[a-z_]+$": {"type": "number", "minimum": 0.1, "maximum": 5.0}
+          },
+          "additionalProperties": false
+        },
+        "region_multipliers": {
+          "type": "object",
+          "description": "Region-specific budget multipliers",
+          "properties": {
+            "north_america": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.2},
+            "europe": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.1},
+            "asia_pacific": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 0.9},
+            "latin_america": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 0.7},
+            "africa": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 0.6},
+            "middle_east": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.0}
+          },
+          "patternProperties": {
+            "^[a-z_]+$": {"type": "number", "minimum": 0.1, "maximum": 3.0}
+          },
+          "additionalProperties": false
+        },
+        "default_industry_multiplier": {
+          "type": "number", 
+          "minimum": 0.5, 
+          "maximum": 2.0,
+          "default": 1.0,
+          "description": "Default multiplier when industry is not recognized"
+        },
+        "default_region_multiplier": {
+          "type": "number", 
+          "minimum": 0.5, 
+          "maximum": 2.0,
+          "default": 1.0,
+          "description": "Default multiplier when region is not recognized"
+        }
+      },
+      "required": ["base_ranges", "industry_multipliers", "region_multipliers"],
+      "additionalProperties": false
+    },
+    "performance_thresholds": {
+      "type": "object",
+      "description": "Performance calculation and trend analysis thresholds",
+      "properties": {
+        "growth_rates": {
+          "type": "object",
+          "description": "Industry growth rate expectations (percentage)",
+          "properties": {
+            "default": {"type": "number", "minimum": -50, "maximum": 100, "default": 5.0},
+            "technology": {"type": "number", "minimum": -50, "maximum": 100, "default": 15.0},
+            "healthcare": {"type": "number", "minimum": -50, "maximum": 100, "default": 8.0},
+            "finance": {"type": "number", "minimum": -50, "maximum": 100, "default": 5.0},
+            "manufacturing": {"type": "number", "minimum": -50, "maximum": 100, "default": 3.0},
+            "retail": {"type": "number", "minimum": -50, "maximum": 100, "default": 4.0},
+            "services": {"type": "number", "minimum": -50, "maximum": 100, "default": 6.0}
+          },
+          "patternProperties": {
+            "^[a-z_]+$": {"type": "number", "minimum": -50, "maximum": 100}
+          },
+          "required": ["default"],
+          "additionalProperties": false
+        },
+        "inflation_rates": {
+          "type": "object",
+          "description": "Regional inflation adjustment factors",
+          "properties": {
+            "default": {"type": "number", "minimum": 0.9, "maximum": 2.0, "default": 1.03},
+            "north_america": {"type": "number", "minimum": 0.9, "maximum": 2.0, "default": 1.03},
+            "europe": {"type": "number", "minimum": 0.9, "maximum": 2.0, "default": 1.025},
+            "asia_pacific": {"type": "number", "minimum": 0.9, "maximum": 2.0, "default": 1.02},
+            "latin_america": {"type": "number", "minimum": 0.9, "maximum": 2.0, "default": 1.05},
+            "africa": {"type": "number", "minimum": 0.9, "maximum": 2.0, "default": 1.04}
+          },
+          "patternProperties": {
+            "^[a-z_]+$": {"type": "number", "minimum": 0.9, "maximum": 2.0}
+          },
+          "required": ["default"],
+          "additionalProperties": false
+        },
+        "success_thresholds": {
+          "type": "object",
+          "description": "Success measurement thresholds",
+          "properties": {
+            "minimum_confidence": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.70},
+            "high_confidence": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.85},
+            "certainty_threshold": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.95},
+            "learning_threshold": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.75}
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["growth_rates", "inflation_rates"],
+      "additionalProperties": false
+    },
+    "caching": {
+      "type": "object",
+      "description": "Configuration for caching mechanisms",
+      "properties": {
+        "max_cache_size": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 100000,
+          "default": 10000,
+          "description": "Maximum number of cached entries"
+        },
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 86400,
+          "default": 3600,
+          "description": "Cache time-to-live in seconds"
+        },
+        "market_data_ttl_hours": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 24,
+          "default": 6,
+          "description": "Market data cache TTL in hours"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["processing", "intelligence", "budget_thresholds", "performance_thresholds"],
+  "additionalProperties": false
+}

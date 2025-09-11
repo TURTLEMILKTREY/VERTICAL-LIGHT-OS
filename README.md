@@ -1,6 +1,15 @@
 # VERTICAL LIGHT OS - AI Marketing Platform
 
-A modern AI-powered marketing platform with FastAPI backend and Next.js frontend.
+A modern AI-powered marketing platform with FastAPI backend and Next.js frontend, featuring enterprise-grade dynamic configuration management and production-ready deployment capabilities.
+
+## 📚 Documentation
+
+For comprehensive technical documentation, see our [**Enterprise Documentation Structure**](./docs/README.md):
+
+- **📊 [System Analysis](./docs/analysis/)** - Technical audits and hardcoded value analysis
+- **⚙️ [Configuration System](./docs/configuration/)** - Dynamic configuration management  
+- **🚀 [Production Readiness](./docs/production-readiness/)** - Deployment roadmaps and implementation tracking
+- **📈 [Development Progress](./docs/development-progress/)** - Daily progress and milestone tracking
 
 ## 🚀 Quick Start
 

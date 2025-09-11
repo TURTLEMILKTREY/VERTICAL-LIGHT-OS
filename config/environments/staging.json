@@ -1,0 +1,146 @@
+{
+  "_extends": "base.json",
+  "_environment": "staging",
+  "_description": "Staging environment configuration - production-like for testing",
+  
+  "system": {
+    "environment": "staging",
+    "debug_mode": false,
+    "verbose_logging": false
+  },
+  
+  "cache": {
+    "redis_url": "${STAGING_REDIS_URL}",
+    "default_ttl": 10800,
+    "performance_ttl": 1800,
+    "market_data_ttl": 3600,
+    "learning_data_ttl": 43200,
+    "max_memory_usage": "128MB"
+  },
+  
+  "api_integration": {
+    "mock_mode": false,
+    "timeout_seconds": 20,
+    "retry_attempts": 2,
+    "rate_limits": {
+      "requests_per_minute": 500,
+      "burst_allowance": 100,
+      "circuit_breaker_threshold": 5
+    },
+    "api_endpoints": {
+      "google_ads": {
+        "base_url": "https://googleads.googleapis.com/v14",
+        "api_key": "${STAGING_GOOGLE_ADS_API_KEY}",
+        "developer_token": "${STAGING_GOOGLE_ADS_DEVELOPER_TOKEN}"
+      },
+      "facebook_marketing": {
+        "base_url": "https://graph.facebook.com/v18.0",
+        "access_token": "${STAGING_FACEBOOK_ACCESS_TOKEN}"
+      },
+      "world_bank": {
+        "base_url": "https://api.worldbank.org/v2",
+        "api_key": "${STAGING_WORLD_BANK_API_KEY}"
+      }
+    }
+  },
+  
+  "dynamic_values": {
+    "budget_classification": {
+      "update_frequency_seconds": 10800,
+      "sources": [
+        {
+          "name": "google_ads_intelligence",
+          "weight": 0.6,
+          "enabled": true
+        },
+        {
+          "name": "market_research_api",
+          "weight": 0.4,
+          "enabled": true
+        }
+      ]
+    },
+    
+    "industry_multipliers": {
+      "update_frequency_seconds": 43200,
+      "sources": [
+        {
+          "name": "economic_intelligence_api",
+          "weight": 0.7,
+          "enabled": true
+        },
+        {
+          "name": "competitive_analysis_api",
+          "weight": 0.3,
+          "enabled": true
+        }
+      ]
+    },
+    
+    "channel_performance": {
+      "update_frequency_seconds": 1800,
+      "sources": [
+        {
+          "name": "google_ads_api",
+          "channels": ["search_advertising"],
+          "weight": 0.8,
+          "enabled": true
+        },
+        {
+          "name": "facebook_marketing_api",
+          "channels": ["social_media"],
+          "weight": 0.8,
+          "enabled": true
+        },
+        {
+          "name": "email_intelligence_api",
+          "channels": ["email_marketing"],
+          "weight": 0.9,
+          "enabled": true
+        }
+      ]
+    }
+  },
+  
+  "learning_system": {
+    "pattern_storage": "database",
+    "database_url": "${STAGING_DATABASE_URL}",
+    "memory_limit": "64MB",
+    "learning_weights": {
+      "recent_data_weight": 0.65,
+      "historical_data_weight": 0.35,
+      "minimum_samples": 8,
+      "confidence_threshold": 0.65
+    }
+  },
+  
+  "monitoring": {
+    "log_level": "INFO",
+    "console_output": false,
+    "file_output": true,
+    "log_file_path": "/var/log/vertical-light-os/staging.log",
+    "metrics_collection": true,
+    "performance_tracking": true,
+    "alerts": {
+      "api_failure_threshold": 5,
+      "performance_degradation_threshold": 0.25,
+      "cache_miss_rate_threshold": 0.75
+    }
+  },
+  
+  "security": {
+    "api_key_rotation_days": 30,
+    "request_encryption": true,
+    "data_encryption_at_rest": true,
+    "audit_logging": true,
+    "ip_whitelist_enabled": true,
+    "allowed_ips": ["${STAGING_ALLOWED_IPS}"]
+  },
+  
+  "performance": {
+    "max_concurrent_api_calls": 25,
+    "database_connection_pool_size": 5,
+    "request_timeout_ms": 20000,
+    "memory_optimization": true
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "goal_parser": {
+    "processing": {
+      "max_goals_per_request": 10,
+      "timeout_seconds": 30.0,
+      "concurrent_processing": 5,
+      "retry_attempts": 2
+    },
+    "intelligence": {
+      "analysis_depth": "comprehensive",
+      "confidence_threshold": 0.8,
+      "market_data_weight": 0.7,
+      "historical_weight": 0.3
+    },
+    "budget_thresholds": {
+      "micro": [0, 1000],
+      "small": [1000, 10000],
+      "medium": [10000, 100000],
+      "large": [100000, 1000000],
+      "enterprise": [1000000, null]
+    },
+    "caching": {
+      "market_data_ttl_hours": 1,
+      "goal_cache_size": 5000,
+      "performance_cache_ttl": 900
+    }
+  },
+  "campaign_generator": {
+    "generation": {
+      "max_campaigns_per_request": 5,
+      "timeout_seconds": 120,
+      "concurrent_generations": 3,
+      "retry_attempts": 2
+    },
+    "channel_intelligence": {
+      "analysis_depth": "standard",
+      "confidence_threshold": 0.75
+    },
+    "optimization": {
+      "budget_allocation_strategy": "hybrid",
+      "reserve_percentage": 0.15
+    },
+    "learning": {
+      "learning_rate": 0.2,
+      "decay_rate": 0.8,
+      "adaptation_threshold": 0.1
+    },
+    "caching": {
+      "market_data_ttl_hours": 1,
+      "campaign_cache_size": 2000,
+      "performance_cache_ttl": 900
+    }
+  }
+}

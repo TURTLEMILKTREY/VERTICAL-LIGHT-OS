@@ -1,0 +1,131 @@
+{
+  "environment": "production",
+  "debug": false,
+  "database": {
+    "host": "${DATABASE_HOST}",
+    "port": "${DATABASE_PORT:-5432}",
+    "name": "${DATABASE_NAME}",
+    "user": "${DATABASE_USER}",
+    "password": "${DATABASE_PASSWORD}",
+    "ssl": true,
+    "pool_size": 20,
+    "connection_pool": {
+      "min_connections": 10,
+      "max_connections": 50
+    }
+  },
+  "redis": {
+    "host": "${REDIS_HOST}",
+    "port": "${REDIS_PORT:-6379}",
+    "db": "${REDIS_DB:-0}",
+    "password": "${REDIS_PASSWORD}",
+    "timeout": 10,
+    "cluster_mode": true
+  },
+  "external_apis": {
+    "bloomberg": {
+      "enabled": true,
+      "base_url": "https://api.bloomberg.com/v1",
+      "api_key": "${BLOOMBERG_API_KEY}",
+      "timeout": 30,
+      "rate_limit": {
+        "requests_per_minute": 500,
+        "burst": 100
+      }
+    },
+    "google_ads": {
+      "enabled": true,
+      "client_id": "${GOOGLE_ADS_CLIENT_ID}",
+      "client_secret": "${GOOGLE_ADS_CLIENT_SECRET}",
+      "developer_token": "${GOOGLE_ADS_DEVELOPER_TOKEN}",
+      "customer_id": "${GOOGLE_ADS_CUSTOMER_ID}",
+      "api_version": "v13"
+    },
+    "facebook_marketing": {
+      "enabled": true,
+      "app_id": "${FACEBOOK_APP_ID}",
+      "app_secret": "${FACEBOOK_APP_SECRET}",
+      "access_token": "${FACEBOOK_ACCESS_TOKEN}",
+      "api_version": "v18.0"
+    },
+    "nielsen": {
+      "enabled": true,
+      "api_key": "${NIELSEN_API_KEY}",
+      "base_url": "https://api.nielsen.com/v2"
+    },
+    "ibisworld": {
+      "enabled": true,
+      "api_key": "${IBISWORLD_API_KEY}",
+      "base_url": "https://api.ibisworld.com/v1"
+    }
+  },
+  "goal_parser": {
+    "budget_thresholds": {
+      "dynamic_calculation": true,
+      "market_data_source": "bloomberg_api",
+      "fallback_chain": [
+        "bloomberg_api",
+        "google_ads_api",
+        "internal_intelligence",
+        "config_values"
+      ]
+    },
+    "performance_thresholds": {
+      "success_threshold": 0.75,
+      "learning_threshold": 0.65,
+      "confidence_threshold": 0.85
+    }
+  },
+  "campaign_generator": {
+    "channel_intelligence": {
+      "real_time_data": true,
+      "market_data_sources": [
+        "google_ads_api",
+        "facebook_marketing_api",
+        "nielsen_api"
+      ],
+      "fallback_mode": "cached_intelligent_defaults"
+    },
+    "optimization": {
+      "advanced_algorithms": true,
+      "ml_optimization": true,
+      "real_time_adjustment": true
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "handlers": {
+      "file": {
+        "enabled": true,
+        "level": "INFO",
+        "filename": "/var/log/vlos/application.log"
+      },
+      "elasticsearch": {
+        "enabled": true,
+        "hosts": ["${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT:-9200}"]
+      }
+    }
+  },
+  "monitoring": {
+    "apm": {
+      "enabled": true,
+      "service_name": "vlos-production",
+      "environment": "production"
+    },
+    "metrics": {
+      "prometheus_enabled": true,
+      "custom_metrics": true
+    }
+  },
+  "security": {
+    "encryption": {
+      "keys_encrypted": true,
+      "api_key_encryption": true
+    },
+    "rate_limiting": {
+      "enabled": true,
+      "requests_per_minute": 1000,
+      "burst": 200
+    }
+  }
+}

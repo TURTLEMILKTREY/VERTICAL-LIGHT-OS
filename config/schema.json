@@ -1,0 +1,367 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vertical Light OS Configuration Schema",
+  "type": "object",
+  "required": ["system", "cache", "api_integration", "dynamic_values"],
+  
+  "properties": {
+    "_schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "_environment": {
+      "type": "string",
+      "enum": ["development", "staging", "production"]
+    },
+    "_extends": {
+      "type": "string"
+    },
+    
+    "system": {
+      "type": "object",
+      "required": ["name", "version", "environment"],
+      "properties": {
+        "name": {"type": "string"},
+        "version": {"type": "string"},
+        "environment": {"type": "string"},
+        "debug_mode": {"type": "boolean"},
+        "verbose_logging": {"type": "boolean"}
+      }
+    },
+    
+    "cache": {
+      "type": "object",
+      "required": ["provider", "default_ttl"],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["redis", "memory", "database"]
+        },
+        "redis_url": {"type": "string"},
+        "default_ttl": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 86400
+        },
+        "performance_ttl": {
+          "type": "integer", 
+          "minimum": 30,
+          "maximum": 7200
+        },
+        "market_data_ttl": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 86400
+        },
+        "learning_data_ttl": {
+          "type": "integer",
+          "minimum": 300,
+          "maximum": 604800
+        },
+        "max_memory_usage": {
+          "type": "string",
+          "pattern": "^[0-9]+[KMGT]?B$"
+        },
+        "compression_enabled": {"type": "boolean"}
+      }
+    },
+    
+    "api_integration": {
+      "type": "object",
+      "required": ["timeout_seconds", "retry_attempts"],
+      "properties": {
+        "mock_mode": {"type": "boolean"},
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 300
+        },
+        "retry_attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "retry_backoff_multiplier": {
+          "type": "number",
+          "minimum": 1.0,
+          "maximum": 5.0
+        },
+        "rate_limits": {
+          "type": "object",
+          "properties": {
+            "requests_per_minute": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            },
+            "burst_allowance": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "circuit_breaker_threshold": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            }
+          }
+        },
+        "api_endpoints": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "type": "object",
+              "required": ["base_url"],
+              "properties": {
+                "base_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "api_key": {"type": "string"},
+                "access_token": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "dynamic_values": {
+      "type": "object",
+      "required": ["budget_classification", "industry_multipliers", "channel_performance"],
+      "properties": {
+        "budget_classification": {
+          "type": "object",
+          "required": ["update_frequency_seconds"],
+          "properties": {
+            "update_frequency_seconds": {
+              "type": "integer",
+              "minimum": 300,
+              "maximum": 86400
+            },
+            "validation": {
+              "type": "object",
+              "properties": {
+                "min_threshold_ratio": {
+                  "type": "number",
+                  "minimum": 0.01,
+                  "maximum": 1.0
+                },
+                "max_threshold_ratio": {
+                  "type": "number", 
+                  "minimum": 1.0,
+                  "maximum": 100.0
+                }
+              }
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "weight", "enabled"],
+                "properties": {
+                  "name": {"type": "string"},
+                  "weight": {
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  },
+                  "enabled": {"type": "boolean"},
+                  "priority": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        
+        "industry_multipliers": {
+          "type": "object",
+          "required": ["update_frequency_seconds"],
+          "properties": {
+            "update_frequency_seconds": {
+              "type": "integer",
+              "minimum": 3600,
+              "maximum": 604800
+            },
+            "validation": {
+              "type": "object",
+              "properties": {
+                "min_multiplier": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "maximum": 1.0
+                },
+                "max_multiplier": {
+                  "type": "number",
+                  "minimum": 1.0,
+                  "maximum": 10.0
+                }
+              }
+            }
+          }
+        },
+        
+        "channel_performance": {
+          "type": "object",
+          "required": ["update_frequency_seconds"],
+          "properties": {
+            "update_frequency_seconds": {
+              "type": "integer",
+              "minimum": 300,
+              "maximum": 86400
+            },
+            "validation": {
+              "type": "object",
+              "properties": {
+                "min_ctr": {
+                  "type": "number",
+                  "minimum": 0.0001,
+                  "maximum": 0.01
+                },
+                "max_ctr": {
+                  "type": "number",
+                  "minimum": 0.01,
+                  "maximum": 1.0
+                },
+                "min_cpc": {
+                  "type": "number",
+                  "minimum": 0.01,
+                  "maximum": 1.0
+                },
+                "max_cpc": {
+                  "type": "number",
+                  "minimum": 1.0,
+                  "maximum": 1000.0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "learning_system": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "pattern_storage": {
+          "type": "string",
+          "enum": ["memory", "database", "hybrid"]
+        },
+        "memory_limit": {
+          "type": "string",
+          "pattern": "^[0-9]+[KMGT]?B$"
+        },
+        "learning_weights": {
+          "type": "object",
+          "properties": {
+            "recent_data_weight": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "historical_data_weight": {
+              "type": "number", 
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "minimum_samples": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "confidence_threshold": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0
+            }
+          }
+        }
+      }
+    },
+    
+    "monitoring": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "log_level": {
+          "type": "string",
+          "enum": ["DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"]
+        },
+        "console_output": {"type": "boolean"},
+        "file_output": {"type": "boolean"},
+        "log_file_path": {"type": "string"},
+        "metrics_collection": {"type": "boolean"},
+        "performance_tracking": {"type": "boolean"},
+        "alerts": {
+          "type": "object",
+          "properties": {
+            "api_failure_threshold": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "performance_degradation_threshold": {
+              "type": "number",
+              "minimum": 0.01,
+              "maximum": 1.0
+            },
+            "cache_miss_rate_threshold": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0
+            }
+          }
+        }
+      }
+    },
+    
+    "security": {
+      "type": "object",
+      "properties": {
+        "api_key_rotation_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365
+        },
+        "request_encryption": {"type": "boolean"},
+        "data_encryption_at_rest": {"type": "boolean"},
+        "audit_logging": {"type": "boolean"},
+        "ip_whitelist_enabled": {"type": "boolean"},
+        "allowed_ips": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    
+    "performance": {
+      "type": "object",
+      "properties": {
+        "max_concurrent_api_calls": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "database_connection_pool_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "request_timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 300000
+        },
+        "memory_optimization": {"type": "boolean"},
+        "async_processing": {"type": "boolean"}
+      }
+    }
+  }
+}

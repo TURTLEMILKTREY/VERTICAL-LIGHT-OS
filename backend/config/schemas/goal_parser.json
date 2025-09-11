@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Goal Parser Configuration Schema",
+  "type": "object",
+  "properties": {
+    "processing": {
+      "type": "object",
+      "properties": {
+        "max_text_length": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 50000
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 300
+        },
+        "concurrent_requests": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        }
+      },
+      "required": ["max_text_length", "timeout_seconds", "concurrent_requests"]
+    },
+    "intelligence": {
+      "type": "object",
+      "properties": {
+        "pattern_matching_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "semantic_similarity_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "learning_rate": {
+          "type": "number",
+          "minimum": 0.001,
+          "maximum": 1
+        },
+        "adaptation_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["pattern_matching_threshold", "semantic_similarity_threshold", "learning_rate"]
+    },
+    "budget_thresholds": {
+      "type": "object",
+      "properties": {
+        "dynamic_calculation": {
+          "type": "boolean"
+        },
+        "market_data_source": {
+          "type": "string",
+          "enum": ["bloomberg_api", "internal_intelligence", "config_values"]
+        },
+        "fallback_values": {
+          "type": "object",
+          "properties": {
+            "micro_threshold": {
+              "type": "number",
+              "minimum": 100,
+              "maximum": 10000
+            },
+            "small_threshold": {
+              "type": "number",
+              "minimum": 1000,
+              "maximum": 50000
+            },
+            "medium_threshold": {
+              "type": "number",
+              "minimum": 10000,
+              "maximum": 500000
+            },
+            "large_threshold": {
+              "type": "number",
+              "minimum": 100000,
+              "maximum": 5000000
+            },
+            "enterprise_threshold": {
+              "type": "number",
+              "minimum": 1000000,
+              "maximum": 50000000
+            }
+          },
+          "required": ["micro_threshold", "small_threshold", "medium_threshold", "large_threshold", "enterprise_threshold"]
+        },
+        "regional_multipliers": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z_]+$": {
+              "type": "number",
+              "minimum": 0.1,
+              "maximum": 3.0
+            }
+          }
+        },
+        "industry_multipliers": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z_]+$": {
+              "type": "number",
+              "minimum": 0.1,
+              "maximum": 3.0
+            }
+          }
+        }
+      },
+      "required": ["dynamic_calculation", "fallback_values"]
+    },
+    "performance_thresholds": {
+      "type": "object",
+      "properties": {
+        "success_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "learning_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "confidence_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["success_threshold", "learning_threshold", "confidence_threshold"]
+    }
+  },
+  "required": ["processing", "intelligence", "budget_thresholds", "performance_thresholds"]
+}

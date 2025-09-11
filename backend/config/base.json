@@ -1,0 +1,129 @@
+{
+  "version": "1.0",
+  "system": {
+    "name": "VERTICAL-LIGHT-OS",
+    "version": "2.0.0",
+    "environment_detection": {
+      "auto_detect": true,
+      "fallback_environment": "development"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "handlers": {
+      "console": {
+        "enabled": true,
+        "level": "INFO"
+      },
+      "file": {
+        "enabled": true,
+        "level": "DEBUG",
+        "filename": "logs/application.log",
+        "max_size_mb": 10,
+        "backup_count": 5
+      }
+    }
+  },
+  "database": {
+    "connection_pool": {
+      "min_connections": 5,
+      "max_connections": 20,
+      "connection_timeout": 30
+    },
+    "retry_policy": {
+      "max_retries": 3,
+      "retry_delay": 1,
+      "backoff_multiplier": 2
+    }
+  },
+  "api": {
+    "rate_limiting": {
+      "requests_per_minute": 60,
+      "burst_allowance": 10
+    },
+    "timeout": {
+      "connect_timeout": 10,
+      "read_timeout": 30,
+      "total_timeout": 45
+    },
+    "retry_policy": {
+      "max_retries": 3,
+      "retry_delay": 2,
+      "exponential_backoff": true
+    }
+  },
+  "cache": {
+    "default_ttl": 3600,
+    "max_size": 10000,
+    "cleanup_interval": 300
+  },
+  "security": {
+    "encryption": {
+      "algorithm": "AES-256-GCM",
+      "key_rotation_days": 90
+    },
+    "api_keys": {
+      "encryption_enabled": true,
+      "expiry_days": 365
+    }
+  },
+  "monitoring": {
+    "metrics": {
+      "enabled": true,
+      "collection_interval": 60,
+      "retention_days": 30
+    },
+    "alerts": {
+      "enabled": true,
+      "email_notifications": true,
+      "slack_notifications": false
+    }
+  },
+  "goal_parser": {
+    "processing": {
+      "max_text_length": 10000,
+      "timeout_seconds": 30,
+      "concurrent_requests": 5
+    },
+    "intelligence": {
+      "pattern_matching_threshold": 0.7,
+      "semantic_similarity_threshold": 0.6,
+      "learning_rate": 0.1,
+      "adaptation_threshold": 0.05
+    },
+    "market_data": {
+      "cache_ttl_hours": 6,
+      "refresh_interval_minutes": 30,
+      "fallback_mode": "intelligent_defaults"
+    }
+  },
+  "campaign_generator": {
+    "generation": {
+      "max_campaigns_per_request": 10,
+      "concurrent_generation_threads": 5,
+      "timeout_seconds": 60
+    },
+    "channel_intelligence": {
+      "performance_cache_ttl_hours": 2,
+      "market_data_refresh_minutes": 15,
+      "competitive_analysis_cache_hours": 4
+    },
+    "optimization": {
+      "min_budget_threshold": 100,
+      "max_budget_allocation": 0.8,
+      "optimization_reserve_percentage": 0.15,
+      "performance_threshold": 0.4
+    }
+  },
+  "external_apis": {
+    "default_timeout": 30,
+    "max_retries": 3,
+    "retry_delay": 2,
+    "circuit_breaker": {
+      "failure_threshold": 5,
+      "recovery_timeout": 60,
+      "half_open_max_calls": 3
+    }
+  }
+}

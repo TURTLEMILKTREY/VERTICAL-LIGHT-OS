@@ -1,0 +1,555 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Enhanced Campaign Generator Configuration Schema",
+  "description": "Complete schema for Campaign Generator configuration with comprehensive type safety and validation",
+  "type": "object",
+  "properties": {
+    "generation": {
+      "type": "object",
+      "description": "Campaign generation processing configuration",
+      "properties": {
+        "max_campaigns_per_request": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 5,
+          "description": "Maximum number of campaigns to generate per request"
+        },
+        "timeout_seconds": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 600,
+          "default": 120,
+          "description": "Generation timeout in seconds"
+        },
+        "concurrent_generations": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 3,
+          "description": "Number of concurrent campaign generations"
+        },
+        "retry_attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "default": 2,
+          "description": "Retry attempts for failed generations"
+        }
+      },
+      "required": ["max_campaigns_per_request", "timeout_seconds"],
+      "additionalProperties": false
+    },
+    "channel_intelligence": {
+      "type": "object",
+      "description": "Channel intelligence and analysis configuration",
+      "properties": {
+        "analysis_depth": {
+          "type": "string",
+          "enum": ["basic", "standard", "comprehensive", "advanced"],
+          "default": "standard",
+          "description": "Depth of channel analysis"
+        },
+        "confidence_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.75,
+          "description": "Minimum confidence for channel recommendations"
+        },
+        "industry_multipliers": {
+          "type": "object",
+          "description": "Industry-specific channel performance multipliers",
+          "properties": {
+            "default": {
+              "type": "object",
+              "properties": {
+                "social_media": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.0},
+                "search_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.0},
+                "email_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.0},
+                "display_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.0},
+                "content_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.0}
+              },
+              "additionalProperties": false
+            },
+            "technology": {
+              "type": "object",
+              "properties": {
+                "social_media": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.1},
+                "search_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.2},
+                "email_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.0},
+                "display_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 0.9},
+                "content_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.3}
+              },
+              "additionalProperties": false
+            },
+            "healthcare": {
+              "type": "object",
+              "properties": {
+                "social_media": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 0.8},
+                "search_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.1},
+                "email_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.3},
+                "display_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 0.7},
+                "content_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.2}
+              },
+              "additionalProperties": false
+            },
+            "finance": {
+              "type": "object",
+              "properties": {
+                "social_media": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 0.7},
+                "search_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.3},
+                "email_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.2},
+                "display_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 0.8},
+                "content_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.1}
+              },
+              "additionalProperties": false
+            },
+            "retail": {
+              "type": "object",
+              "properties": {
+                "social_media": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.4},
+                "search_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.0},
+                "email_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.1},
+                "display_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 1.2},
+                "content_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0, "default": 0.9}
+              },
+              "additionalProperties": false
+            }
+          },
+          "patternProperties": {
+            "^[a-z_]+$": {
+              "type": "object",
+              "properties": {
+                "social_media": {"type": "number", "minimum": 0.1, "maximum": 3.0},
+                "search_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0},
+                "email_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0},
+                "display_advertising": {"type": "number", "minimum": 0.1, "maximum": 3.0},
+                "content_marketing": {"type": "number", "minimum": 0.1, "maximum": 3.0}
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": ["default"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["analysis_depth", "confidence_threshold", "industry_multipliers"],
+      "additionalProperties": false
+    },
+    "channel_performance": {
+      "type": "object",
+      "description": "Channel performance baselines and metrics",
+      "properties": {
+        "search_advertising": {
+          "type": "object",
+          "properties": {
+            "ctr_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0, "maximum": 1},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.02, 0.08]
+            },
+            "cpc_range": {
+              "type": "array", 
+              "items": {"type": "number", "minimum": 0},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [1.5, 8.0]
+            },
+            "conversion_rate_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0, "maximum": 1},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.02, 0.12]
+            },
+            "reach_potential": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.95},
+            "targeting_precision": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.90},
+            "competitive_intensity": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.85},
+            "industry_relevance": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.85}
+          },
+          "required": ["ctr_range", "cpc_range", "conversion_rate_range"],
+          "additionalProperties": false
+        },
+        "social_media": {
+          "type": "object",
+          "properties": {
+            "ctr_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0, "maximum": 1},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.015, 0.06]
+            },
+            "cpc_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.8, 4.5]
+            },
+            "conversion_rate_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0, "maximum": 1},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.015, 0.08]
+            },
+            "reach_potential": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.90},
+            "targeting_precision": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.85},
+            "competitive_intensity": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.80},
+            "industry_relevance": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.80}
+          },
+          "required": ["ctr_range", "cpc_range", "conversion_rate_range"],
+          "additionalProperties": false
+        },
+        "email_marketing": {
+          "type": "object",
+          "properties": {
+            "ctr_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0, "maximum": 1},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.18, 0.35]
+            },
+            "cpc_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.1, 0.5]
+            },
+            "conversion_rate_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0, "maximum": 1},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.15, 0.30]
+            },
+            "reach_potential": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.70},
+            "targeting_precision": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.95},
+            "competitive_intensity": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.30},
+            "industry_relevance": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.90}
+          },
+          "required": ["ctr_range", "cpc_range", "conversion_rate_range"],
+          "additionalProperties": false
+        },
+        "default": {
+          "type": "object",
+          "properties": {
+            "ctr_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0, "maximum": 1},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.01, 0.05]
+            },
+            "cpc_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.5, 3.0]
+            },
+            "conversion_rate_range": {
+              "type": "array",
+              "items": {"type": "number", "minimum": 0, "maximum": 1},
+              "minItems": 2,
+              "maxItems": 2,
+              "default": [0.01, 0.06]
+            },
+            "reach_potential": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.60},
+            "targeting_precision": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.70},
+            "competitive_intensity": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.60},
+            "industry_relevance": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.70}
+          },
+          "required": ["ctr_range", "cpc_range", "conversion_rate_range"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["search_advertising", "social_media", "email_marketing", "default"],
+      "additionalProperties": false
+    },
+    "audience_channel_affinity": {
+      "type": "object",
+      "description": "Audience demographic to channel affinity mappings",
+      "properties": {
+        "age_groups": {
+          "type": "object",
+          "properties": {
+            "18_35": {
+              "type": "object",
+              "properties": {
+                "social_media": {
+                  "oneOf": [
+                    {"type": "number", "minimum": 0, "maximum": 1},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "base": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.90},
+                        "sophistication_factor": {"type": "number", "minimum": 0, "maximum": 0.5, "default": 0.05}
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "default": {"base": 0.90, "sophistication_factor": 0.05}
+                },
+                "search_advertising": {
+                  "oneOf": [
+                    {"type": "number", "minimum": 0, "maximum": 1},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "base": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.75},
+                        "sophistication_factor": {"type": "number", "minimum": 0, "maximum": 0.5, "default": 0.10}
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "default": {"base": 0.75, "sophistication_factor": 0.10}
+                },
+                "email_marketing": {
+                  "oneOf": [
+                    {"type": "number", "minimum": 0, "maximum": 1},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "base": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.60},
+                        "sophistication_factor": {"type": "number", "minimum": 0, "maximum": 0.5, "default": 0.15}
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "default": {"base": 0.60, "sophistication_factor": 0.15}
+                }
+              },
+              "additionalProperties": false
+            },
+            "35_55": {
+              "type": "object",
+              "properties": {
+                "search_advertising": {
+                  "oneOf": [
+                    {"type": "number", "minimum": 0, "maximum": 1},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "base": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.85},
+                        "sophistication_factor": {"type": "number", "minimum": 0, "maximum": 0.5, "default": 0.10}
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "default": {"base": 0.85, "sophistication_factor": 0.10}
+                },
+                "social_media": {
+                  "oneOf": [
+                    {"type": "number", "minimum": 0, "maximum": 1},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "base": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.80},
+                        "sophistication_factor": {"type": "number", "minimum": 0, "maximum": 0.5, "default": 0.05}
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "default": {"base": 0.80, "sophistication_factor": 0.05}
+                },
+                "email_marketing": {
+                  "oneOf": [
+                    {"type": "number", "minimum": 0, "maximum": 1},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "base": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.85},
+                        "sophistication_factor": {"type": "number", "minimum": 0, "maximum": 0.5, "default": 0.10}
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "default": {"base": 0.85, "sophistication_factor": 0.10}
+                }
+              },
+              "additionalProperties": false
+            },
+            "55_plus": {
+              "type": "object",
+              "properties": {
+                "email_marketing": {
+                  "oneOf": [
+                    {"type": "number", "minimum": 0, "maximum": 1},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "base": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.90},
+                        "sophistication_factor": {"type": "number", "minimum": 0, "maximum": 0.5, "default": 0.05}
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "default": {"base": 0.90, "sophistication_factor": 0.05}
+                },
+                "search_advertising": {
+                  "oneOf": [
+                    {"type": "number", "minimum": 0, "maximum": 1},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "base": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.80},
+                        "sophistication_factor": {"type": "number", "minimum": 0, "maximum": 0.5, "default": 0.10}
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "default": {"base": 0.80, "sophistication_factor": 0.10}
+                },
+                "social_media": {
+                  "oneOf": [
+                    {"type": "number", "minimum": 0, "maximum": 1},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "base": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.65},
+                        "sophistication_factor": {"type": "number", "minimum": 0, "maximum": 0.5, "default": 0.15}
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "default": {"base": 0.65, "sophistication_factor": 0.15}
+                }
+              },
+              "additionalProperties": false
+            },
+            "default": {
+              "type": "object",
+              "properties": {
+                "social_media": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.70},
+                "search_advertising": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.75},
+                "email_marketing": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.80}
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": ["18_35", "35_55", "55_plus", "default"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["age_groups"],
+      "additionalProperties": false
+    },
+    "seasonal_factors": {
+      "type": "object",
+      "description": "Seasonal adjustment factors by quarter",
+      "properties": {
+        "q1": {"type": "number", "minimum": 0.5, "maximum": 2.0, "default": 0.95},
+        "q2": {"type": "number", "minimum": 0.5, "maximum": 2.0, "default": 1.0},
+        "q3": {"type": "number", "minimum": 0.5, "maximum": 2.0, "default": 1.05},
+        "q4": {"type": "number", "minimum": 0.5, "maximum": 2.0, "default": 1.10},
+        "default": {"type": "number", "minimum": 0.5, "maximum": 2.0, "default": 1.0}
+      },
+      "required": ["q1", "q2", "q3", "q4", "default"],
+      "additionalProperties": false
+    },
+    "optimization": {
+      "type": "object",
+      "description": "Campaign optimization configuration",
+      "properties": {
+        "budget_allocation_strategy": {
+          "type": "string",
+          "enum": ["equal_split", "performance_weighted", "potential_weighted", "hybrid"],
+          "default": "hybrid"
+        },
+        "reserve_percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.5,
+          "default": 0.15,
+          "description": "Percentage of budget to reserve for optimization"
+        },
+        "performance_weights": {
+          "type": "object",
+          "properties": {
+            "reach": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.25},
+            "engagement": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.30},
+            "conversion": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.35},
+            "cost_efficiency": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.10}
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["budget_allocation_strategy", "reserve_percentage", "performance_weights"],
+      "additionalProperties": false
+    },
+    "learning": {
+      "type": "object",
+      "description": "Machine learning and adaptation configuration",
+      "properties": {
+        "learning_rate": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 0.5,
+          "default": 0.2,
+          "description": "Learning rate for user preference updates"
+        },
+        "decay_rate": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 0.99,
+          "default": 0.8,
+          "description": "Decay rate for historical pattern weighting"
+        },
+        "adaptation_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.1,
+          "description": "Minimum change required to trigger adaptation"
+        }
+      },
+      "required": ["learning_rate", "decay_rate"],
+      "additionalProperties": false
+    },
+    "caching": {
+      "type": "object",
+      "description": "Caching configuration for performance optimization",
+      "properties": {
+        "market_data_ttl_hours": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 48,
+          "default": 2,
+          "description": "Market data cache TTL in hours"
+        },
+        "campaign_cache_size": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 10000,
+          "default": 1000,
+          "description": "Maximum number of cached campaigns"
+        },
+        "performance_cache_ttl": {
+          "type": "integer",
+          "minimum": 300,
+          "maximum": 86400,
+          "default": 1800,
+          "description": "Performance data cache TTL in seconds"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "generation",
+    "channel_intelligence", 
+    "channel_performance",
+    "audience_channel_affinity",
+    "seasonal_factors",
+    "optimization",
+    "learning"
+  ],
+  "additionalProperties": false
+}

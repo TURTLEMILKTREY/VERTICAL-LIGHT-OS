@@ -1,0 +1,134 @@
+{
+  "_schema_version": "1.0.0",
+  "_description": "Base configuration for AI Campaign Generator & Goal Parser Systems",
+  "_last_updated": "2025-09-11",
+  
+  "system": {
+    "name": "vertical_light_os",
+    "version": "1.0.0",
+    "environment": "base"
+  },
+  
+  "cache": {
+    "provider": "redis",
+    "redis_url": "${REDIS_URL}",
+    "default_ttl": 21600,
+    "performance_ttl": 3600,
+    "market_data_ttl": 7200,
+    "learning_data_ttl": 86400,
+    "max_memory_usage": "256MB",
+    "compression_enabled": true
+  },
+  
+  "api_integration": {
+    "timeout_seconds": 30,
+    "retry_attempts": 3,
+    "retry_backoff_multiplier": 2,
+    "rate_limits": {
+      "requests_per_minute": 1000,
+      "burst_allowance": 200,
+      "circuit_breaker_threshold": 5
+    },
+    "health_check": {
+      "interval_seconds": 300,
+      "timeout_seconds": 10,
+      "failure_threshold": 3
+    }
+  },
+  
+  "dynamic_values": {
+    "budget_classification": {
+      "update_frequency_seconds": 21600,
+      "validation": {
+        "min_threshold_ratio": 0.1,
+        "max_threshold_ratio": 10.0,
+        "percentage_change_alert": 0.25
+      },
+      "fallback_strategy": "cached_then_default",
+      "cache_ttl": 43200
+    },
+    
+    "industry_multipliers": {
+      "update_frequency_seconds": 86400,
+      "validation": {
+        "min_multiplier": 0.3,
+        "max_multiplier": 3.0,
+        "variance_alert_threshold": 0.5
+      },
+      "fallback_strategy": "ml_prediction_then_cached",
+      "cache_ttl": 172800
+    },
+    
+    "channel_performance": {
+      "update_frequency_seconds": 3600,
+      "validation": {
+        "min_ctr": 0.001,
+        "max_ctr": 1.0,
+        "min_cpc": 0.01,
+        "max_cpc": 100.0,
+        "min_conversion_rate": 0.001,
+        "max_conversion_rate": 1.0
+      },
+      "fallback_strategy": "interpolated_then_cached",
+      "cache_ttl": 7200
+    },
+    
+    "regional_factors": {
+      "update_frequency_seconds": 86400,
+      "validation": {
+        "min_factor": 0.1,
+        "max_factor": 5.0,
+        "currency_validation": true
+      },
+      "fallback_strategy": "cached_then_default",
+      "cache_ttl": 172800
+    }
+  },
+  
+  "learning_system": {
+    "enabled": true,
+    "pattern_storage": "database",
+    "memory_limit": "128MB",
+    "learning_weights": {
+      "recent_data_weight": 0.6,
+      "historical_data_weight": 0.4,
+      "minimum_samples": 10,
+      "confidence_threshold": 0.7
+    },
+    "adaptation": {
+      "min_adjustment": 0.1,
+      "max_adjustment": 2.0,
+      "learning_rate": 0.05,
+      "decay_factor": 0.95
+    }
+  },
+  
+  "monitoring": {
+    "enabled": true,
+    "log_level": "INFO",
+    "metrics_collection": true,
+    "performance_tracking": true,
+    "error_reporting": true,
+    "alerts": {
+      "api_failure_threshold": 3,
+      "performance_degradation_threshold": 0.2,
+      "cache_miss_rate_threshold": 0.8
+    }
+  },
+  
+  "security": {
+    "api_key_rotation_days": 90,
+    "request_encryption": true,
+    "data_encryption_at_rest": true,
+    "audit_logging": true,
+    "ip_whitelist_enabled": false
+  },
+  
+  "performance": {
+    "max_concurrent_api_calls": 50,
+    "database_connection_pool_size": 10,
+    "request_timeout_ms": 30000,
+    "memory_optimization": true,
+    "async_processing": true
+  }
+}

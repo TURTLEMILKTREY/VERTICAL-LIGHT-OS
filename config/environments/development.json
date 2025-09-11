@@ -1,0 +1,146 @@
+{
+  "_extends": "base.json",
+  "_environment": "development",
+  "_description": "Development environment configuration - optimized for testing and debugging",
+  
+  "system": {
+    "environment": "development",
+    "debug_mode": true,
+    "verbose_logging": true
+  },
+  
+  "cache": {
+    "provider": "memory",
+    "default_ttl": 300,
+    "performance_ttl": 60,
+    "market_data_ttl": 120,
+    "learning_data_ttl": 600,
+    "max_memory_usage": "64MB",
+    "compression_enabled": false
+  },
+  
+  "api_integration": {
+    "mock_mode": true,
+    "mock_response_delay_ms": 100,
+    "timeout_seconds": 10,
+    "retry_attempts": 1,
+    "rate_limits": {
+      "requests_per_minute": 100,
+      "burst_allowance": 50,
+      "circuit_breaker_threshold": 10
+    }
+  },
+  
+  "dynamic_values": {
+    "budget_classification": {
+      "update_frequency_seconds": 300,
+      "mock_data": {
+        "micro_threshold": 500,
+        "small_threshold": 5000,
+        "medium_threshold": 50000,
+        "large_threshold": 500000,
+        "enterprise_threshold": 2000000
+      }
+    },
+    
+    "industry_multipliers": {
+      "update_frequency_seconds": 600,
+      "mock_data": {
+        "technology": 1.2,
+        "healthcare": 1.1,
+        "finance": 1.3,
+        "manufacturing": 1.0,
+        "retail": 1.1,
+        "services": 1.0,
+        "education": 0.9,
+        "nonprofit": 0.8
+      }
+    },
+    
+    "channel_performance": {
+      "update_frequency_seconds": 120,
+      "mock_data": {
+        "search_advertising": {
+          "ctr_range": [0.02, 0.08],
+          "cpc_range": [1.5, 8.0],
+          "conversion_rate_range": [0.02, 0.12],
+          "reach_potential": 0.85,
+          "targeting_precision": 0.90,
+          "competitive_intensity": 0.75
+        },
+        "social_media": {
+          "ctr_range": [0.015, 0.06],
+          "cpc_range": [0.8, 4.5],
+          "conversion_rate_range": [0.015, 0.08],
+          "reach_potential": 0.80,
+          "targeting_precision": 0.85,
+          "competitive_intensity": 0.70
+        },
+        "email_marketing": {
+          "ctr_range": [0.18, 0.35],
+          "cpc_range": [0.1, 0.5],
+          "conversion_rate_range": [0.15, 0.30],
+          "reach_potential": 0.70,
+          "targeting_precision": 0.95,
+          "competitive_intensity": 0.30
+        }
+      }
+    },
+    
+    "regional_factors": {
+      "update_frequency_seconds": 3600,
+      "mock_data": {
+        "north_america": {
+          "cost_multiplier": 1.2,
+          "growth_factor": 1.03,
+          "currency": "USD"
+        },
+        "europe": {
+          "cost_multiplier": 1.1,
+          "growth_factor": 1.025,
+          "currency": "EUR"
+        },
+        "asia_pacific": {
+          "cost_multiplier": 0.9,
+          "growth_factor": 1.02,
+          "currency": "USD"
+        }
+      }
+    }
+  },
+  
+  "learning_system": {
+    "pattern_storage": "memory",
+    "memory_limit": "32MB",
+    "learning_weights": {
+      "recent_data_weight": 0.8,
+      "historical_data_weight": 0.2,
+      "minimum_samples": 3,
+      "confidence_threshold": 0.5
+    }
+  },
+  
+  "monitoring": {
+    "log_level": "DEBUG",
+    "console_output": true,
+    "file_output": false,
+    "metrics_collection": false,
+    "performance_tracking": true
+  },
+  
+  "security": {
+    "api_key_rotation_days": 7,
+    "request_encryption": false,
+    "data_encryption_at_rest": false,
+    "audit_logging": false,
+    "ip_whitelist_enabled": false
+  },
+  
+  "performance": {
+    "max_concurrent_api_calls": 5,
+    "database_connection_pool_size": 2,
+    "request_timeout_ms": 10000,
+    "memory_optimization": false,
+    "async_processing": true
+  }
+}
