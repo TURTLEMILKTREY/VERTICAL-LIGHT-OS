@@ -1,0 +1,112 @@
+{
+    "generation": {
+        "max_campaigns_per_request": 5,
+        "concurrent_generation_threads": 3,
+        "timeout_seconds": 120
+    },
+    "channel_intelligence": {
+        "performance_cache_ttl_hours": 6,
+        "market_data_refresh_minutes": 30,
+        "competitive_analysis_cache_hours": 12,
+        "real_time_data": true
+    },
+    "channel_performance": {
+        "search_advertising": {
+            "ctr_range": [0.02, 0.08],
+            "cpc_range": [1.5, 8.0],
+            "conversion_rate_range": [0.02, 0.12],
+            "targeting_precision": 0.9
+        },
+        "social_media": {
+            "ctr_range": [0.015, 0.06],
+            "cpc_range": [0.8, 4.5],
+            "conversion_rate_range": [0.015, 0.08],
+            "targeting_precision": 0.85
+        },
+        "email_marketing": {
+            "ctr_range": [0.18, 0.35],
+            "cpc_range": [0.1, 0.5],
+            "conversion_rate_range": [0.15, 0.3],
+            "targeting_precision": 0.95
+        },
+        "display_advertising": {
+            "ctr_range": [0.01, 0.05],
+            "cpc_range": [0.5, 3.0],
+            "conversion_rate_range": [0.01, 0.06],
+            "targeting_precision": 0.8
+        },
+        "content_marketing": {
+            "ctr_range": [0.03, 0.12],
+            "cpc_range": [0.2, 2.0],
+            "conversion_rate_range": [0.05, 0.15],
+            "targeting_precision": 0.75
+        },
+        "retargeting": {
+            "ctr_range": [0.04, 0.15],
+            "cpc_range": [1.0, 6.0],
+            "conversion_rate_range": [0.08, 0.25],
+            "targeting_precision": 0.95
+        },
+        "video_marketing": {
+            "ctr_range": [0.02, 0.10],
+            "cpc_range": [0.3, 2.5],
+            "conversion_rate_range": [0.03, 0.18],
+            "targeting_precision": 0.85
+        },
+        "affiliate_marketing": {
+            "ctr_range": [0.01, 0.08],
+            "cpc_range": [0.5, 4.0],
+            "conversion_rate_range": [0.05, 0.20],
+            "targeting_precision": 0.80
+        },
+        "mobile_advertising": {
+            "ctr_range": [0.015, 0.09],
+            "cpc_range": [0.4, 3.5],
+            "conversion_rate_range": [0.02, 0.15],
+            "targeting_precision": 0.88
+        }
+    },
+    "audience_channel_affinity": {
+        "young_professionals": {
+            "social_media": 0.9,
+            "search_advertising": 0.7,
+            "content_marketing": 0.8,
+            "email_marketing": 0.6,
+            "display_advertising": 0.5,
+            "retargeting": 0.85,
+            "video_marketing": 0.9,
+            "affiliate_marketing": 0.7,
+            "mobile_advertising": 0.95
+        },
+        "executives": {
+            "search_advertising": 0.9,
+            "email_marketing": 0.8,
+            "content_marketing": 0.7,
+            "social_media": 0.5,
+            "display_advertising": 0.6,
+            "retargeting": 0.8,
+            "video_marketing": 0.6,
+            "affiliate_marketing": 0.5,
+            "mobile_advertising": 0.7
+        },
+        "tech_enthusiasts": {
+            "content_marketing": 0.9,
+            "social_media": 0.8,
+            "search_advertising": 0.8,
+            "email_marketing": 0.7,
+            "display_advertising": 0.4,
+            "retargeting": 0.9,
+            "video_marketing": 0.95,
+            "affiliate_marketing": 0.8,
+            "mobile_advertising": 0.9
+        }
+    },
+    "optimization": {
+        "min_budget_threshold": 1000,
+        "max_budget_allocation": 0.8,
+        "optimization_reserve_percentage": 0.15,
+        "performance_threshold": 0.7,
+        "advanced_algorithms": true,
+        "ml_optimization": true
+    }
+}

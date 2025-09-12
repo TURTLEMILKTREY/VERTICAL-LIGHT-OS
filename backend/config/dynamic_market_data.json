@@ -1,0 +1,62 @@
+{
+  "market_data_engine": {
+    "cache_settings": {
+      "ttl_hours_config_key": "goal_parser.caching.market_data_ttl_hours",
+      "enable_cache_config_key": "goal_parser.caching.enable_cache",
+      "max_entries_config_key": "goal_parser.caching.max_cache_entries"
+    },
+    "api_endpoints": {
+      "primary_sources": {
+        "bloomberg": {
+          "budget_trends_endpoint_key": "external_apis.bloomberg.budget_trends_endpoint",
+          "industry_benchmarks_endpoint_key": "external_apis.bloomberg.industry_benchmarks_endpoint",
+          "economic_indicators_endpoint_key": "external_apis.bloomberg.economic_indicators_endpoint"
+        },
+        "google_ads": {
+          "competitive_intelligence_endpoint_key": "external_apis.google_ads.competitive_intelligence_endpoint",
+          "market_insights_endpoint_key": "external_apis.google_ads.market_insights_endpoint"
+        }
+      },
+      "fallback_discovery": {
+        "endpoint_pattern": "external_apis.{provider}.{endpoint_type}_endpoint",
+        "timeout_config_key": "external_apis.default_timeout",
+        "retry_config_key": "external_apis.max_retries"
+      }
+    },
+    "budget_calculation": {
+      "base_ranges_config_key": "goal_parser.budget_thresholds.base_ranges",
+      "industry_multipliers_config_key": "goal_parser.budget_thresholds.industry_multipliers",
+      "region_multipliers_config_key": "goal_parser.budget_thresholds.region_multipliers",
+      "default_industry_config_key": "goal_parser.budget_thresholds.default_industry_multiplier",
+      "default_region_config_key": "goal_parser.budget_thresholds.default_region_multiplier",
+      "percentile_values_config_key": "goal_parser.budget_thresholds.percentile_base_values"
+    },
+    "performance_metrics": {
+      "growth_rates_config_key": "goal_parser.performance_thresholds.growth_rates",
+      "inflation_rates_config_key": "goal_parser.performance_thresholds.inflation_rates",
+      "success_threshold_config_key": "goal_parser.performance_thresholds.success_threshold"
+    },
+    "dynamic_calculation_rules": {
+      "growth_inflation_formula": "base_value * (1 + growth_rate/100) * inflation_factor",
+      "threshold_mapping": {
+        "micro_threshold": "p25",
+        "small_threshold": "p50", 
+        "medium_threshold": "p75",
+        "large_threshold": "p90",
+        "enterprise_threshold": "p95"
+      },
+      "multiplier_application_order": ["base_value", "industry_multiplier", "region_multiplier", "growth_factor", "inflation_factor"]
+    },
+    "validation_rules": {
+      "threshold_ordering": "ascending",
+      "multiplier_range": {"min": 0.1, "max": 10.0},
+      "cache_expiry_bounds": {"min_hours": 1, "max_hours": 168}
+    }
+  },
+  "test_configuration": {
+    "dynamic_test_data_source": "backend/config/test_market_data_scenarios.json",
+    "test_scenarios_config_key": "test_scenarios.market_data_engine",
+    "validation_expectations_config_key": "test_validation.market_data_engine",
+    "performance_benchmarks_config_key": "test_performance.market_data_engine"
+  }
+}

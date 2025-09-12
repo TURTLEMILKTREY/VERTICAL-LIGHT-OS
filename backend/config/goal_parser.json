@@ -1,0 +1,100 @@
+{
+    "processing": {
+        "concurrent_requests": 10,
+        "timeout_seconds": 30,
+        "retry_attempts": 3,
+        "batch_size": 50,
+        "max_text_length": 10000
+    },
+    "intelligence": {
+        "semantic_similarity_threshold": 0.75,
+        "confidence_threshold": 0.80,
+        "learning_rate": 0.15,
+        "decay_factor": 0.95,
+        "pattern_matching_threshold": 0.70,
+        "adaptation_threshold": 0.65,
+        "sophistication_weights": {
+            "industry_knowledge": 0.4,
+            "market_awareness": 0.35,
+            "technical_depth": 0.25
+        }
+    },
+    "budget_thresholds": {
+        "base_ranges": {
+            "micro": 500,
+            "small": 5000,
+            "medium": 50000,
+            "large": 500000,
+            "enterprise": 2000000
+        },
+        "percentile_base_values": {
+            "25": 1000,
+            "50": 10000,
+            "75": 100000,
+            "90": 500000,
+            "95": 1000000,
+            "default": 10000
+        },
+        "industry_multipliers": {
+            "technology": 1.5,
+            "healthcare": 1.3,
+            "finance": 1.4,
+            "manufacturing": 1.2,
+            "retail": 0.9,
+            "services": 1.0,
+            "education": 0.7,
+            "real_estate": 1.2,
+            "automotive": 1.1,
+            "entertainment": 1.3
+        },
+        "region_multipliers": {
+            "north_america": 1.2,
+            "europe": 1.1,
+            "asia_pacific": 0.9,
+            "latin_america": 0.7,
+            "africa": 0.6,
+            "middle_east": 1.0,
+            "global": 1.0
+        },
+        "default_industry_multiplier": 1.0,
+        "default_region_multiplier": 1.0,
+        "min_industry_multiplier": 0.1,
+        "max_industry_multiplier": 10.0,
+        "min_region_multiplier": 0.1,
+        "max_region_multiplier": 10.0
+    },
+    "performance_thresholds": {
+        "success_threshold": 0.85,
+        "learning_threshold": 0.75,
+        "confidence_threshold": 0.70,
+        "growth_rates": {
+            "default": 5.0,
+            "technology": 15.0,
+            "healthcare": 8.0,
+            "finance": 6.0,
+            "retail": 3.0,
+            "manufacturing": 4.0,
+            "services": 5.5,
+            "education": 2.0,
+            "real_estate": 4.5,
+            "automotive": 3.5,
+            "entertainment": 7.0
+        },
+        "inflation_rates": {
+            "default": 1.03,
+            "north_america": 1.03,
+            "europe": 1.025,
+            "asia_pacific": 1.04,
+            "latin_america": 1.08,
+            "africa": 1.06,
+            "middle_east": 1.045,
+            "global": 1.03
+        }
+    },
+    "caching": {
+        "market_data_ttl_hours": 6,
+        "enable_cache": true,
+        "max_cache_entries": 1000,
+        "cleanup_interval_minutes": 30
+    }
+}

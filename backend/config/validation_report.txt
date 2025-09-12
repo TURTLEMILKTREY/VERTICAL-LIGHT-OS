@@ -1,0 +1,67 @@
+================================================================================
+CONFIGURATION SYSTEM VALIDATION REPORT
+================================================================================
+Generated: validate_configuration.py at /Users/sargamdighade/VERTICAL-LIGHT-OS
+Overall Status: PASSED
+
+SCHEMA VALIDATION
+----------------------------------------
+✓ PASS goal_parser.json
+  Warning: Missing description field
+  Warning: Property processing.max_text_length missing default value
+  Warning: Property processing.timeout_seconds missing default value
+  Warning: Property processing.concurrent_requests missing default value
+  Warning: Property intelligence.pattern_matching_threshold missing default value
+  Warning: Property intelligence.semantic_similarity_threshold missing default value
+  Warning: Property intelligence.learning_rate missing default value
+  Warning: Property intelligence.adaptation_threshold missing default value
+  Warning: Property budget_thresholds.dynamic_calculation missing default value
+  Warning: Property budget_thresholds.market_data_source missing default value
+  Warning: Property budget_thresholds.fallback_values.micro_threshold missing default value
+  Warning: Property budget_thresholds.fallback_values.small_threshold missing default value
+  Warning: Property budget_thresholds.fallback_values.medium_threshold missing default value
+  Warning: Property budget_thresholds.fallback_values.large_threshold missing default value
+  Warning: Property budget_thresholds.fallback_values.enterprise_threshold missing default value
+  Warning: Property performance_thresholds.success_threshold missing default value
+  Warning: Property performance_thresholds.learning_threshold missing default value
+  Warning: Property performance_thresholds.confidence_threshold missing default value
+  Warning: String property budget_thresholds.market_data_source should have length or pattern constraints
+✓ PASS campaign_generator_enhanced.json
+  Warning: String property channel_intelligence.analysis_depth should have length or pattern constraints
+  Warning: String property optimization.budget_allocation_strategy should have length or pattern constraints
+✓ PASS goal_parser_enhanced.json
+✓ PASS campaign_generator.json
+  Warning: Missing description field
+  Warning: Property generation.max_campaigns_per_request missing default value
+  Warning: Property generation.concurrent_generation_threads missing default value
+  Warning: Property generation.timeout_seconds missing default value
+  Warning: Property channel_intelligence.performance_cache_ttl_hours missing default value
+  Warning: Property channel_intelligence.market_data_refresh_minutes missing default value
+  Warning: Property channel_intelligence.competitive_analysis_cache_hours missing default value
+  Warning: Property channel_intelligence.real_time_data missing default value
+  Warning: Property optimization.min_budget_threshold missing default value
+  Warning: Property optimization.max_budget_allocation missing default value
+  Warning: Property optimization.optimization_reserve_percentage missing default value
+  Warning: Property optimization.performance_threshold missing default value
+  Warning: Property optimization.advanced_algorithms missing default value
+  Warning: Property optimization.ml_optimization missing default value
+
+CONFIGURATION VALIDATION
+----------------------------------------
+✓ PASS goal_parser.json -> goal_parser_enhanced.json
+  Detail: Configuration validates against schema
+✓ PASS campaign_generator.json -> campaign_generator_enhanced.json
+  Detail: Configuration validates against schema
+
+INHERITANCE VALIDATION
+----------------------------------------
+✓ PASS Environment: production
+  Inherited: 32 keys
+  Overridden: 6 keys
+  New: 30 keys
+✓ PASS Environment: development
+  Inherited: 21 keys
+  Overridden: 1 keys
+  New: 19 keys
+
+================================================================================

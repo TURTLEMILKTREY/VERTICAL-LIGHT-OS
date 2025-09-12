@@ -1,0 +1,121 @@
+{
+  "test_scenarios": {
+    "market_data_engine": {
+      "industry_test_cases": [
+        {
+          "industry": "technology",
+          "region": "north_america",
+          "expected_multiplier_source": "goal_parser.budget_thresholds.industry_multipliers.technology",
+          "expected_region_source": "goal_parser.budget_thresholds.region_multipliers.north_america"
+        },
+        {
+          "industry": "healthcare", 
+          "region": "europe",
+          "expected_multiplier_source": "goal_parser.budget_thresholds.industry_multipliers.healthcare",
+          "expected_region_source": "goal_parser.budget_thresholds.region_multipliers.europe"
+        },
+        {
+          "industry": "finance",
+          "region": "asia_pacific", 
+          "expected_multiplier_source": "goal_parser.budget_thresholds.industry_multipliers.finance",
+          "expected_region_source": "goal_parser.budget_thresholds.region_multipliers.asia_pacific"
+        },
+        {
+          "industry": "retail",
+          "region": "latin_america",
+          "expected_multiplier_source": "goal_parser.budget_thresholds.industry_multipliers.retail", 
+          "expected_region_source": "goal_parser.budget_thresholds.region_multipliers.latin_america"
+        },
+        {
+          "industry": "manufacturing",
+          "region": "africa",
+          "expected_multiplier_source": "goal_parser.budget_thresholds.industry_multipliers.manufacturing",
+          "expected_region_source": "goal_parser.budget_thresholds.region_multipliers.africa"
+        }
+      ],
+      "cache_test_scenarios": [
+        {
+          "scenario_name": "cache_population",
+          "ttl_source": "goal_parser.caching.market_data_ttl_hours",
+          "enable_cache_source": "goal_parser.caching.enable_cache"
+        },
+        {
+          "scenario_name": "cache_expiry", 
+          "manual_expiry_offset_hours": -1,
+          "validation_method": "_is_cache_valid"
+        }
+      ],
+      "api_fallback_scenarios": [
+        {
+          "scenario_name": "primary_api_failure",
+          "mock_failure_method": "_fetch_budget_trends",
+          "expected_fallback": "_generate_intelligent_budget_ranges"
+        }
+      ],
+      "thread_safety_scenarios": [
+        {
+          "concurrent_threads": 10,
+          "industries_rotation": ["technology", "healthcare", "finance"],
+          "regions_rotation": ["north_america", "europe", "asia_pacific"]
+        }
+      ]
+    }
+  },
+  "test_validation": {
+    "market_data_engine": {
+      "range_validation_rules": {
+        "threshold_ordering": "ascending",
+        "required_keys": ["micro_threshold", "small_threshold", "medium_threshold", "large_threshold", "enterprise_threshold"],
+        "value_type": "float",
+        "min_value_source": "goal_parser.budget_thresholds.base_ranges.micro",
+        "max_value_calculation": "base_ranges.enterprise * max_industry_multiplier * max_region_multiplier"
+      },
+      "cache_validation_rules": {
+        "cache_structure": {
+          "data_cache_type": "dict",
+          "cache_expiry_type": "dict",
+          "expiry_value_type": "datetime"
+        },
+        "ttl_validation": {
+          "source": "goal_parser.caching.market_data_ttl_hours",
+          "future_validation": "cache_expiry > datetime.now()"
+        }
+      },
+      "multiplier_validation_rules": {
+        "industry_multiplier_bounds": {
+          "min_source": "goal_parser.budget_thresholds.min_industry_multiplier",
+          "max_source": "goal_parser.budget_thresholds.max_industry_multiplier",
+          "default_source": "goal_parser.budget_thresholds.default_industry_multiplier"
+        },
+        "region_multiplier_bounds": {
+          "min_source": "goal_parser.budget_thresholds.min_region_multiplier", 
+          "max_source": "goal_parser.budget_thresholds.max_region_multiplier",
+          "default_source": "goal_parser.budget_thresholds.default_region_multiplier"
+        }
+      },
+      "api_validation_rules": {
+        "endpoint_format": "https://",
+        "timeout_source": "external_apis.default_timeout",
+        "retry_source": "external_apis.max_retries"
+      }
+    }
+  },
+  "test_performance": {
+    "market_data_engine": {
+      "response_time_expectations": {
+        "cache_hit_max_ms": 50,
+        "cache_miss_max_ms": 2000,
+        "api_timeout_source": "external_apis.default_timeout"
+      },
+      "thread_safety_expectations": {
+        "max_concurrent_threads": 10,
+        "error_tolerance": 0,
+        "result_consistency": true
+      },
+      "memory_usage_expectations": {
+        "max_cache_entries_source": "goal_parser.caching.max_cache_entries",
+        "cache_cleanup_trigger": "cache_size > max_entries * 0.9"
+      }
+    }
+  }
+}

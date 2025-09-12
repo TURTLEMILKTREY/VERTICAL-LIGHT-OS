@@ -1,0 +1,1 @@
+# Campaign generator service package

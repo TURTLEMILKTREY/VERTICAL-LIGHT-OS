@@ -17,8 +17,8 @@ import math
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from ..goal_parser.dynamic_ai_parser import UltraDynamicGoalParser, SemanticVector, DynamicIntelligenceEngine
-from ...config.config_manager import get_config_manager
+from services.goal_parser.dynamic_ai_parser import UltraDynamicGoalParser, SemanticVector, DynamicIntelligenceEngine
+from config.config_manager import get_config_manager
 
 # Configure production logging using configuration
 config_manager = get_config_manager()

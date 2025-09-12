@@ -59,39 +59,6 @@
       "base_url": "https://api.ibisworld.com/v1"
     }
   },
-  "goal_parser": {
-    "budget_thresholds": {
-      "dynamic_calculation": true,
-      "market_data_source": "bloomberg_api",
-      "fallback_chain": [
-        "bloomberg_api",
-        "google_ads_api",
-        "internal_intelligence",
-        "config_values"
-      ]
-    },
-    "performance_thresholds": {
-      "success_threshold": 0.75,
-      "learning_threshold": 0.65,
-      "confidence_threshold": 0.85
-    }
-  },
-  "campaign_generator": {
-    "channel_intelligence": {
-      "real_time_data": true,
-      "market_data_sources": [
-        "google_ads_api",
-        "facebook_marketing_api",
-        "nielsen_api"
-      ],
-      "fallback_mode": "cached_intelligent_defaults"
-    },
-    "optimization": {
-      "advanced_algorithms": true,
-      "ml_optimization": true,
-      "real_time_adjustment": true
-    }
-  },
   "logging": {
     "level": "INFO",
     "handlers": {

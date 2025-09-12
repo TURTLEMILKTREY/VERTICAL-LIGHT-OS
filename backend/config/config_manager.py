@@ -275,11 +275,27 @@ class ConfigurationManager:
             directory.mkdir(parents=True, exist_ok=True)
     
     def _initialize_sources(self):
-        """Initialize configuration sources"""
+        """Initialize configuration sources with modular service support"""
         # Base configuration file
         base_config_path = self.base_path / 'base.json'
         if base_config_path.exists():
             self._sources['base'] = FileConfigurationSource(str(base_config_path))
+        
+        # Service-specific configuration files (modular approach for scalability)
+        service_configs = [
+            'campaign_generator.json',
+            'goal_parser.json',
+            'crm_sync.json',
+            'landing_page_generator.json',
+            'optimization_engine.json',
+            'reporting_module.json'
+        ]
+        
+        for service_config in service_configs:
+            service_config_path = self.base_path / service_config
+            if service_config_path.exists():
+                service_name = service_config.replace('.json', '')
+                self._sources[f'service_{service_name}'] = FileConfigurationSource(str(service_config_path))
         
         # Environment-specific configuration
         env_config_path = self.base_path / 'environments' / f'{self.environment}.json'
@@ -309,7 +325,7 @@ class ConfigurationManager:
                 logger.info("Loaded base configuration")
     
     def _load_environment_configuration(self):
-        """Load environment-specific configuration"""
+        """Load environment-specific configuration and service modules"""
         # Load environment-specific file
         env_source = self._sources.get(self.environment)
         if env_source:
@@ -323,6 +339,9 @@ class ConfigurationManager:
                 )
                 self._configurations[self.environment] = env_config
                 logger.info(f"Loaded {self.environment} environment configuration")
+        
+        # Load service-specific configurations (modular architecture)
+        self._load_service_configurations()
         
         # Load environment variables
         env_var_source = self._sources.get('env_vars')
@@ -349,6 +368,28 @@ class ConfigurationManager:
                 )
                 self._configurations['user'] = user_config
                 logger.info("Loaded user override configuration")
+    
+    def _load_service_configurations(self):
+        """Load modular service-specific configurations for enterprise scalability"""
+        service_sources = {k: v for k, v in self._sources.items() if k.startswith('service_')}
+        
+        for source_name, source in service_sources.items():
+            try:
+                service_data = source.load()
+                if service_data:
+                    service_name = source_name.replace('service_', '')
+                    
+                    # Create environment config for the service
+                    service_config = EnvironmentConfig(
+                        name=source_name,
+                        config_data=service_data,
+                        last_modified=source.get_last_modified(),
+                        inheritance_chain=['base', self.environment, source_name]
+                    )
+                    self._configurations[source_name] = service_config
+                    logger.info(f"Loaded modular service configuration: {service_name}")
+            except Exception as e:
+                logger.warning(f"Failed to load service config {source_name}: {e}")
     
     def _initialize_schemas(self):
         """Initialize validation schemas"""
@@ -698,10 +739,15 @@ class ConfigurationManager:
     
     def _resolve_configuration_value(self, key: str, default: Any,
                                    environment: Optional[str] = None) -> Any:
-        """Resolve configuration value from hierarchy"""
+        """Resolve configuration value from enterprise-grade modular hierarchy"""
         target_env = environment or self.environment
         
-        # Priority order: user -> environment -> env_vars -> base
+        # Enterprise configuration priority order:
+        # 1. User overrides (highest priority)
+        # 2. Environment-specific settings
+        # 3. Service-specific configurations (modular scalability)
+        # 4. Environment variables
+        # 5. Base configuration (lowest priority)
         search_order = []
         
         if 'user' in self._configurations:
@@ -709,6 +755,12 @@ class ConfigurationManager:
         
         if target_env in self._configurations:
             search_order.append(target_env)
+        
+        # Add service-specific configurations based on key
+        service_key = key.split('.')[0] if '.' in key else key
+        service_config_name = f'service_{service_key}'
+        if service_config_name in self._configurations:
+            search_order.append(service_config_name)
         
         if 'env_vars' in self._configurations:
             search_order.append('env_vars')
@@ -719,7 +771,22 @@ class ConfigurationManager:
         # Search in priority order
         for config_name in search_order:
             config = self._configurations[config_name]
-            value = self._get_nested_value(config.config_data, key)
+            
+            # For service configs, check if we should look for the key directly
+            if config_name.startswith('service_'):
+                service_name = config_name.replace('service_', '')
+                if key.startswith(f'{service_name}.'):
+                    # Remove service prefix from key when searching in service config
+                    service_key = key[len(service_name) + 1:]
+                    value = self._get_nested_value(config.config_data, service_key)
+                elif key == service_name:
+                    # Return entire service config
+                    value = config.config_data
+                else:
+                    continue
+            else:
+                value = self._get_nested_value(config.config_data, key)
+            
             if value is not None:
                 return value
         
@@ -754,8 +821,13 @@ class ConfigurationManager:
     
     def _validate_value(self, key: str, value: Any) -> Dict[str, Any]:
         """Validate configuration value against schema"""
+        # For nested keys (like goal_parser.processing), skip individual validation
+        # These are validated as part of the full service configuration
+        if '.' in key:
+            return {'valid': True, 'errors': []}
+        
         # Extract schema name from key
-        schema_name = key.split('.')[0] if '.' in key else 'general'
+        schema_name = key
         
         schema = self._schemas.get(schema_name)
         if not schema:

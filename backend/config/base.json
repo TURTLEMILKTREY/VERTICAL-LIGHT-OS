@@ -80,42 +80,6 @@
       "slack_notifications": false
     }
   },
-  "goal_parser": {
-    "processing": {
-      "max_text_length": 10000,
-      "timeout_seconds": 30,
-      "concurrent_requests": 5
-    },
-    "intelligence": {
-      "pattern_matching_threshold": 0.7,
-      "semantic_similarity_threshold": 0.6,
-      "learning_rate": 0.1,
-      "adaptation_threshold": 0.05
-    },
-    "market_data": {
-      "cache_ttl_hours": 6,
-      "refresh_interval_minutes": 30,
-      "fallback_mode": "intelligent_defaults"
-    }
-  },
-  "campaign_generator": {
-    "generation": {
-      "max_campaigns_per_request": 10,
-      "concurrent_generation_threads": 5,
-      "timeout_seconds": 60
-    },
-    "channel_intelligence": {
-      "performance_cache_ttl_hours": 2,
-      "market_data_refresh_minutes": 15,
-      "competitive_analysis_cache_hours": 4
-    },
-    "optimization": {
-      "min_budget_threshold": 100,
-      "max_budget_allocation": 0.8,
-      "optimization_reserve_percentage": 0.15,
-      "performance_threshold": 0.4
-    }
-  },
   "external_apis": {
     "default_timeout": 30,
     "max_retries": 3,
@@ -124,6 +88,20 @@
       "failure_threshold": 5,
       "recovery_timeout": 60,
       "half_open_max_calls": 3
+    },
+    "bloomberg": {
+      "budget_trends_endpoint": "https://api.bloomberg.com/budget-trends",
+      "industry_benchmarks_endpoint": "https://api.bloomberg.com/industry-benchmarks", 
+      "economic_indicators_endpoint": "https://api.bloomberg.com/economic-data",
+      "api_key": "test_bloomberg_key",
+      "timeout": 30,
+      "retry_count": 3
+    },
+    "google_ads": {
+      "competitive_intelligence_endpoint": "https://api.googleads.com/competitive-data",
+      "market_insights_endpoint": "https://api.googleads.com/market-insights",
+      "api_key": "test_google_ads_key", 
+      "timeout": 30
     }
   }
 }
