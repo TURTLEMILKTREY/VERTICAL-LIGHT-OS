@@ -107,6 +107,60 @@
         "optimization_reserve_percentage": 0.15,
         "performance_threshold": 0.7,
         "advanced_algorithms": true,
-        "ml_optimization": true
+        "ml_optimization": true,
+        "default_performance": {
+            "default_reach": 1000,
+            "default_engagement": 0.05,
+            "default_conversions": 25,
+            "conversion_rate": 0.025,
+            "confidence_threshold": 0.7,
+            "default_efficiency": 0.8
+        },
+        "base_threshold_multiplier": 0.5,
+        "default_budget": 10000,
+        "low_budget_threshold": 5000,
+        "high_budget_threshold": 50000,
+        "low_budget_adjustment": 0.1,
+        "high_budget_adjustment": -0.05,
+        "min_viability_threshold": 0.1,
+        "max_viability_threshold": 0.8,
+        "default_audience_affinity": 0.5
+    },
+    "scoring_weights": {
+        "base_weights": {
+            "audience": 0.25,
+            "business": 0.20,
+            "objective": 0.20,
+            "cost": 0.15,
+            "competitive": 0.10,
+            "performance": 0.10
+        },
+        "objective_adjustments": {
+            "conversion": {
+                "performance_boost": 0.05,
+                "cost_boost": 0.05,
+                "audience_reduction": 0.05,
+                "business_reduction": 0.05
+            },
+            "awareness": {
+                "audience_boost": 0.10,
+                "competitive_reduction": 0.05,
+                "cost_reduction": 0.05
+            },
+            "engagement": {
+                "audience_boost": 0.05,
+                "performance_boost": 0.05,
+                "cost_reduction": 0.10
+            }
+        },
+        "budget_adjustments": {
+            "default_budget": 10000,
+            "low_budget_threshold": 5000,
+            "low_budget_cost_boost": 0.10
+        }
+    },
+    "fallback": {
+        "default_channel": "search_advertising",
+        "default_message": "Professional solutions tailored to your needs"
     }
 }

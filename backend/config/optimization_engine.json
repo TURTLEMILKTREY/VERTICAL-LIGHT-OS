@@ -1,0 +1,62 @@
+{
+    "performance_thresholds": {
+        "min_ctr": 0.02,
+        "min_conversion_rate": 0.05,
+        "target_cpa": 100.0,
+        "target_roas": 3.0,
+        "underperforming_ctr": 0.02,
+        "underperforming_conversion": 0.05
+    },
+    "budget_optimization": {
+        "min_allocation_percentage": 0.05,
+        "default_channel_score": 0.5,
+        "roas_normalization_factor": 5.0,
+        "cpa_normalization_factor": 200.0,
+        "volume_normalization_factor": 1000.0
+    },
+    "efficiency_weights": {
+        "roas_weight": 0.4,
+        "cpa_weight": 0.4,
+        "volume_weight": 0.2
+    },
+    "optimization_scoring": {
+        "performance_excellent": 0.8,
+        "performance_good": 0.6,
+        "performance_poor": 0.3,
+        "improvement_potential_default": 0.3,
+        "confidence_threshold": 0.7
+    },
+    "success_thresholds": {
+        "default_min_roas": 3.0,
+        "default_max_cpa": 50.0,
+        "default_min_ctr": 0.02,
+        "default_min_conversion_rate": 0.03,
+        "roas_drop_alert": 0.2,
+        "cpa_increase_alert": 0.3
+    },
+    "adaptation_rules": {
+        "high_performer_multiplier": 1.5,
+        "underperformer_multiplier": 0.5,
+        "audience_expansion_multiplier": 2.0
+    },
+    "opportunity_detection": {
+        "high_cpa_threshold_multiplier": 1.0,
+        "low_ctr_threshold": 0.02,
+        "low_conversion_threshold": 0.05
+    },
+    "optimization_frequency": {
+        "daily_threshold": 0.6,
+        "weekly_default": true
+    },
+    "timeline_estimates": {
+        "low_difficulty": "1-2 weeks",
+        "medium_difficulty": "2-4 weeks", 
+        "high_difficulty": "4-8 weeks",
+        "default_timeline": "2-4 weeks"
+    },
+    "monitoring": {
+        "key_metrics": ["roas", "cpa", "ctr", "conversion_rate"],
+        "default_frequency": "daily",
+        "alert_sensitivity": "medium"
+    }
+}

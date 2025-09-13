@@ -1,0 +1,35 @@
+{
+    "semantic_vector": {
+        "default_confidence": 0.0,
+        "magnitude_zero_threshold": 0.0,
+        "similarity_zero_return": 0.0
+    },
+    "concept_extraction": {
+        "minimum_word_length": 2,
+        "concept_weight_normalization": true,
+        "default_concept_weight": 1.0
+    },
+    "relationship_analysis": {
+        "default_relationship_strength": 0.5,
+        "relationship_threshold": 0.3,
+        "proximity_weight_factor": 0.5
+    },
+    "confidence_calculation": {
+        "default_confidence_empty": 0.0,
+        "entropy_log_epsilon": 1e-10,
+        "relationship_density_weight": 0.1,
+        "confidence_normalizer": 10.0,
+        "max_confidence": 1.0
+    },
+    "contextual_entity": {
+        "default_confidence": 0.0,
+        "default_entity_type": "unknown",
+        "default_context_window": ""
+    },
+    "business_profile": {
+        "default_growth_indicators": {},
+        "default_risk_profile": {},
+        "default_market_dynamics": {},
+        "default_competitive_intelligence": {}
+    }
+}

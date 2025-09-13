@@ -1,0 +1,80 @@
+{
+    "thresholds": {
+        "priority_high": 0.8,
+        "priority_medium": 0.6,
+        "growth_strong": 0.7,
+        "risk_high": 0.6,
+        "risk_critical": 0.8,
+        "market_growth_significant": 0.2,
+        "market_growth_moderate": 0.1,
+        "growth_potential_threshold": 0.6
+    },
+    "confidence_weights": {
+        "pattern_clarity": 0.3,
+        "growth_potential": 0.25,
+        "risk_factor": 0.2,
+        "data_completeness": 0.25
+    },
+    "confidence_bounds": {
+        "minimum": 0.1,
+        "maximum": 1.0
+    },
+    "strategic_limits": {
+        "max_secondary_directions": 3,
+        "max_recommendations": 5,
+        "pattern_completeness_baseline": 10
+    },
+    "approach_criteria": {
+        "rapid_execution": {
+            "urgency_threshold": 0.7,
+            "complexity_max": 0.5
+        },
+        "comprehensive_transformation": {
+            "complexity_min": 0.6,
+            "budget_scales": ["large_budget", "enterprise_budget"]
+        },
+        "phased_implementation": {
+            "complexity_min": 0.7,
+            "urgency_max": 0.3
+        },
+        "lean_agile_approach": {
+            "urgency_min": 0.6,
+            "budget_scales": ["small_budget", "micro_budget"]
+        }
+    },
+    "market_entry_strategies": {
+        "first_mover_advantage": {
+            "market_maturity": "emerging",
+            "competition_level": "low"
+        },
+        "niche_differentiation": {
+            "market_maturity": "mature",
+            "competition_level": "high"
+        },
+        "direct_competition": {
+            "competition_level": "low"
+        },
+        "strategic_partnership": {
+            "default": true
+        }
+    },
+    "direction_indicators": {
+        "growth_strategy": ["grow", "expand", "increase", "scale", "development"],
+        "optimization_strategy": ["optimize", "improve", "enhance", "efficiency", "streamline"],
+        "acquisition_strategy": ["acquire", "capture", "win", "gain", "attract"],
+        "retention_strategy": ["retain", "keep", "maintain", "loyalty", "engagement"],
+        "innovation_strategy": ["innovate", "create", "develop", "launch", "breakthrough"],
+        "market_penetration": ["market", "penetrate", "share", "dominance", "positioning"]
+    },
+    "scoring": {
+        "full_match_weight": 1.0,
+        "partial_match_weight": 0.5
+    },
+    "defaults": {
+        "primary_direction": "comprehensive_business_strategy",
+        "strategic_approach": "balanced_strategic_approach",
+        "confidence_fallback": 0.5,
+        "timeline_urgency": 0.5,
+        "text_complexity": 0.5
+    }
+}

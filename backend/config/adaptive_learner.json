@@ -1,0 +1,40 @@
+{
+    "success_criteria": {
+        "high_success_threshold": 0.7,
+        "success_classification_threshold": 0.7,
+        "default_success_probability": 0.5,
+        "minimum_confidence": 0.3
+    },
+    "similarity_analysis": {
+        "pattern_similarity_threshold": 0.6,
+        "strong_similarity_threshold": 0.5,
+        "weak_similarity_threshold": 0.3
+    },
+    "learning_parameters": {
+        "max_learning_history": 1000,
+        "history_retention_count": 800,
+        "max_optimization_suggestions": 5,
+        "weight_multiplier_high": 1.0,
+        "weight_multiplier_low": 0.5
+    },
+    "pattern_matching": {
+        "timeline_urgency_default": 0.5,
+        "text_complexity_default": 0.5,
+        "context_similarity_threshold": 0.6
+    },
+    "prediction_settings": {
+        "default_probability_fallback": 0.5,
+        "minimum_total_weight": 0.0,
+        "confidence_boost_threshold": 0.7
+    },
+    "optimization_rules": {
+        "success_rate_filter": 0.7,
+        "pattern_similarity_filter": 0.5,
+        "unique_suggestion_priority": true
+    },
+    "adaptive_insights": {
+        "high_success_pattern_threshold": 0.7,
+        "learning_confidence_base": 0.5,
+        "adaptation_success_multiplier": 1.2
+    }
+}

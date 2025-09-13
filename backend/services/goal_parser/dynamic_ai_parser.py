@@ -5,21 +5,20 @@ Uses advanced semantic intelligence and real-time contextual learning.
 """
 
 import re
-import json
-import hashlib
-import logging
-import requests
-import time
-from typing import Dict, List, Optional, Any, Tuple, Set, Union
-from datetime import datetime, timedelta
-from dataclasses import dataclass, field, asdict
+import logging  
+from typing import Dict, List, Optional, Any
+from datetime import datetime
 from collections import defaultdict, Counter
-import math
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
 import threading
 
 from config.config_manager import get_config_manager
+
+# Import shared services - modular architecture
+from backend.services.market_intelligence import get_market_data_engine
+from backend.services.shared.semantic import SemanticVector, ContextualEntity, DynamicBusinessProfile, SemanticAnalyzer
+from backend.services.shared.intelligence import get_intelligence_engine
+from backend.services.shared.synthesis import get_strategic_synthesizer
+from backend.services.learning import get_adaptive_learner
 
 # Configure production logging using configuration
 config_manager = get_config_manager()
@@ -31,248 +30,6 @@ logging.basicConfig(
     format=log_format
 )
 logger = logging.getLogger(__name__)
-
-class MarketDataEngine:
-    """100% Dynamic Real-time market data engine with zero hardcoded values"""
-    
-    def __init__(self):
-        self.config_manager = get_config_manager()
-        
-        # Load dynamic configuration metadata
-        self.dynamic_config = self._load_dynamic_configuration()
-        
-        self.data_cache: Dict[str, Dict[str, Any]] = {}
-        self.cache_expiry: Dict[str, datetime] = {}
-        self.market_apis = self._initialize_market_apis()
-        self.lock = threading.RLock()
-        
-        # All cache settings from configuration
-        self.cache_ttl_hours = self._get_dynamic_value('cache_settings.ttl_hours_config_key')
-        self.enable_cache = self._get_dynamic_value('cache_settings.enable_cache_config_key')
-        self.max_cache_entries = self._get_dynamic_value('cache_settings.max_entries_config_key')
-        
-    def _load_dynamic_configuration(self) -> Dict[str, Any]:
-        """Load completely dynamic configuration metadata"""
-        try:
-            dynamic_config_path = self.config_manager.get_config_path('dynamic_market_data.json')
-            with open(dynamic_config_path, 'r') as f:
-                return json.load(f)['market_data_engine']
-        except Exception as e:
-            logger.error(f"Failed to load dynamic configuration: {e}")
-            raise RuntimeError("Cannot operate without dynamic configuration")
-    
-    def _get_dynamic_value(self, config_path: str) -> Any:
-        """Get any value dynamically from configuration using dot notation"""
-        return self.config_manager.get(self.dynamic_config[config_path])
-    
-    def _initialize_market_apis(self) -> Dict[str, str]:
-        """Initialize market data API endpoints completely from configuration"""
-        apis = {}
-        
-        # Get primary sources configuration
-        primary_sources = self.dynamic_config['api_endpoints']['primary_sources']
-        
-        for provider, endpoints in primary_sources.items():
-            for endpoint_name, config_key in endpoints.items():
-                endpoint_url = self.config_manager.get(config_key)
-                if endpoint_url:
-                    api_name = endpoint_name.replace('_endpoint_key', '')
-                    apis[api_name] = endpoint_url
-        
-        # Dynamic fallback discovery
-        fallback_config = self.dynamic_config['api_endpoints']['fallback_discovery']
-        timeout = self.config_manager.get(fallback_config['timeout_config_key'])
-        retry_count = self.config_manager.get(fallback_config['retry_config_key'])
-        
-        # Store configuration values for use in API calls
-        self.api_timeout = timeout
-        self.api_retry_count = retry_count
-        
-        return apis
-    
-    def get_market_budget_ranges(self, industry: str = 'general', region: str = 'global') -> Dict[str, float]:
-        """Get dynamic budget ranges with 100% configuration-driven calculation"""
-        if not self.enable_cache:
-            return self._calculate_fresh_ranges(industry, region)
-            
-        cache_key = f"budget_ranges_{industry}_{region}"
-        
-        with self.lock:
-            # Check cache validity using dynamic configuration
-            if cache_key in self.data_cache and self._is_cache_valid(cache_key):
-                return self.data_cache[cache_key]
-            
-            # Fetch using completely dynamic process
-            try:
-                market_data = self._fetch_budget_trends(industry, region)
-                ranges = self._calculate_dynamic_ranges(market_data)
-            except Exception as e:
-                logger.warning(f"Market data unavailable, using intelligent defaults: {e}")
-                ranges = self._generate_intelligent_budget_ranges(industry, region)
-            
-            # Cache management using dynamic configuration
-            self._manage_cache_size()
-            self.data_cache[cache_key] = ranges
-            self.cache_expiry[cache_key] = datetime.now() + timedelta(hours=self.cache_ttl_hours)
-            
-            return ranges
-    
-    def _calculate_fresh_ranges(self, industry: str, region: str) -> Dict[str, float]:
-        """Calculate ranges without caching when cache is disabled"""
-        try:
-            market_data = self._fetch_budget_trends(industry, region)
-            return self._calculate_dynamic_ranges(market_data)
-        except Exception as e:
-            logger.warning(f"Market data unavailable, using intelligent defaults: {e}")
-            return self._generate_intelligent_budget_ranges(industry, region)
-    
-    def _manage_cache_size(self):
-        """Manage cache size using dynamic configuration"""
-        if len(self.data_cache) >= self.max_cache_entries:
-            # Remove oldest entries
-            cleanup_count = int(self.max_cache_entries * 0.2)  # Remove 20% when full
-            oldest_keys = sorted(self.cache_expiry.keys(), 
-                               key=lambda k: self.cache_expiry[k])[:cleanup_count]
-            for key in oldest_keys:
-                self.data_cache.pop(key, None)
-                self.cache_expiry.pop(key, None)
-    
-    def _fetch_budget_trends(self, industry: str, region: str) -> Dict[str, Any]:
-        """Fetch budget trends using completely dynamic API configuration"""
-        # In production, this would call real APIs using dynamic endpoints
-        # For now, simulate with dynamic intelligent estimation
-        percentile_config = self._get_dynamic_value('budget_calculation.percentile_values_config_key')
-        
-        return {
-            'percentiles': {
-                f'p{p}': self._estimate_budget_percentile(industry, region, int(p))
-                for p in percentile_config.keys() if p.isdigit()
-            },
-            'growth_rate': self._estimate_market_growth(industry),
-            'inflation_factor': self._get_inflation_adjustment(region)
-        }
-    
-    def _calculate_dynamic_ranges(self, market_data: Dict[str, Any]) -> Dict[str, float]:
-        """Calculate ranges using completely dynamic rules from configuration"""
-        percentiles = market_data['percentiles']
-        
-        # Get dynamic calculation rules
-        calc_rules = self.dynamic_config['dynamic_calculation_rules']
-        growth_rate = market_data['growth_rate']
-        inflation_factor = market_data['inflation_factor']
-        
-        # Apply formula from configuration
-        formula_template = calc_rules['growth_inflation_formula']
-        growth_factor = 1 + (growth_rate / 100.0)
-        
-        # Apply dynamic threshold mapping
-        threshold_mapping = calc_rules['threshold_mapping']
-        ranges = {}
-        
-        for threshold_name, percentile_key in threshold_mapping.items():
-            base_value = percentiles.get(percentile_key, percentiles.get('p50', 0))
-            # Apply formula: base_value * (1 + growth_rate/100) * inflation_factor
-            adjusted_value = base_value * growth_factor * inflation_factor
-            ranges[threshold_name] = adjusted_value
-        
-        # Validate using dynamic rules
-        self._validate_ranges(ranges)
-        return ranges
-    
-    def _validate_ranges(self, ranges: Dict[str, float]):
-        """Validate ranges using dynamic validation rules"""
-        validation_rules = self.dynamic_config['validation_rules']
-        
-        if validation_rules['threshold_ordering'] == 'ascending':
-            threshold_names = ['micro_threshold', 'small_threshold', 'medium_threshold', 
-                             'large_threshold', 'enterprise_threshold']
-            values = [ranges[name] for name in threshold_names if name in ranges]
-            
-            for i in range(len(values) - 1):
-                if values[i] >= values[i + 1]:
-                    raise ValueError(f"Threshold ordering validation failed: {values}")
-    
-    def _generate_intelligent_budget_ranges(self, industry: str, region: str) -> Dict[str, float]:
-        """Generate intelligent ranges using completely dynamic configuration"""
-        base_multiplier = self._get_industry_multiplier(industry)
-        region_multiplier = self._get_region_multiplier(region)
-        
-        # Get all base ranges from configuration  
-        base_ranges_config = self._get_dynamic_value('budget_calculation.base_ranges_config_key')
-        threshold_mapping = self.dynamic_config['dynamic_calculation_rules']['threshold_mapping']
-        
-        ranges = {}
-        for threshold_name, percentile_key in threshold_mapping.items():
-            # Map threshold to base range key
-            range_key = threshold_name.replace('_threshold', '')
-            base_value = base_ranges_config.get(range_key, base_ranges_config.get('medium', 0))
-            
-            # Apply dynamic multiplier calculation
-            final_value = base_value * base_multiplier * region_multiplier
-            ranges[threshold_name] = final_value
-        
-        self._validate_ranges(ranges)
-        return ranges
-    
-    def _get_industry_multiplier(self, industry: str) -> float:
-        """Get industry multiplier completely from configuration"""
-        industry_multipliers = self._get_dynamic_value('budget_calculation.industry_multipliers_config_key')
-        default_multiplier = self._get_dynamic_value('budget_calculation.default_industry_config_key')
-        
-        # Normalize industry name for lookup
-        normalized_industry = industry.lower().replace(' ', '_').replace('-', '_')
-        multiplier = industry_multipliers.get(normalized_industry, default_multiplier)
-        
-        # Validate bounds using dynamic configuration
-        min_bound = self.config_manager.get('goal_parser.budget_thresholds.min_industry_multiplier')
-        max_bound = self.config_manager.get('goal_parser.budget_thresholds.max_industry_multiplier')
-        
-        return max(min_bound, min(max_bound, multiplier))
-    
-    def _get_region_multiplier(self, region: str) -> float:
-        """Get region multiplier completely from configuration"""
-        region_multipliers = self._get_dynamic_value('budget_calculation.region_multipliers_config_key')
-        default_multiplier = self._get_dynamic_value('budget_calculation.default_region_config_key')
-        
-        normalized_region = region.lower().replace(' ', '_').replace('-', '_')
-        multiplier = region_multipliers.get(normalized_region, default_multiplier)
-        
-        # Validate bounds using dynamic configuration
-        min_bound = self.config_manager.get('goal_parser.budget_thresholds.min_region_multiplier')
-        max_bound = self.config_manager.get('goal_parser.budget_thresholds.max_region_multiplier')
-        
-        return max(min_bound, min(max_bound, multiplier))
-    
-    def _estimate_budget_percentile(self, industry: str, region: str, percentile: int) -> float:
-        """Estimate budget percentile using completely dynamic configuration"""
-        percentile_config = self._get_dynamic_value('budget_calculation.percentile_values_config_key')
-        base_value = percentile_config.get(str(percentile), percentile_config.get('default'))
-        
-        # Apply dynamic multipliers
-        industry_mult = self._get_industry_multiplier(industry)
-        region_mult = self._get_region_multiplier(region)
-        
-        return base_value * industry_mult * region_mult
-    
-    def _estimate_market_growth(self, industry: str) -> float:
-        """Get market growth rate completely from configuration"""
-        growth_config = self._get_dynamic_value('performance_metrics.growth_rates_config_key')
-        normalized_industry = industry.lower().replace(' ', '_').replace('-', '_')
-        return growth_config.get(normalized_industry, growth_config.get('default'))
-    
-    def _get_inflation_adjustment(self, region: str) -> float:
-        """Get inflation adjustment completely from configuration"""
-        inflation_config = self._get_dynamic_value('performance_metrics.inflation_rates_config_key')
-        normalized_region = region.lower().replace(' ', '_').replace('-', '_')
-        return inflation_config.get(normalized_region, inflation_config.get('default'))
-    
-    def _is_cache_valid(self, cache_key: str) -> bool:
-        """Check cache validity using dynamic configuration"""
-        if not self.enable_cache:
-            return False
-            
-        return (cache_key in self.cache_expiry and 
-                datetime.now() < self.cache_expiry[cache_key])
 
 class UserInteractionTracker:
     """Tracks user interactions to learn preferences and patterns"""
@@ -287,7 +44,7 @@ class UserInteractionTracker:
                          context: Dict[str, Any], outcome: Optional[float] = None):
         """Track user interaction for learning"""
         with self.lock:
-            interaction = {
+            interaction: Dict[str, Any] = {
                 'type': interaction_type,
                 'context': context,
                 'outcome': outcome,
@@ -349,7 +106,7 @@ class ContextualLearner:
                 }
             
             # Store learning data
-            learning_entry = {
+            learning_entry: Dict[str, Any] = {
                 'business_context': business_context,
                 'analysis_result': analysis_result,
                 'success_score': success_score,
@@ -370,145 +127,20 @@ class ContextualLearner:
                             self.industry_patterns[industry]['adaptation_factors'][key] = []
                         self.industry_patterns[industry]['adaptation_factors'][key].append(value)
     
-    def get_industry_adaptations(self, industry: str) -> Dict[str, float]:
+    def get_industry_adaptations(self, industry: str) -> Dict[str, Any]:
         """Get learned adaptations for specific industry"""
         with self.lock:
             if industry not in self.industry_patterns:
                 return {}
             
             patterns = self.industry_patterns[industry]
-            adaptations = {}
+            adaptations: Dict[str, Any] = {}
             
             for factor, values in patterns['adaptation_factors'].items():
                 if values:
                     adaptations[factor] = sum(values) / len(values)
             
             return adaptations
-
-@dataclass
-class SemanticVector:
-    """Represents semantic meaning as multi-dimensional vectors"""
-    concepts: Dict[str, float] = field(default_factory=dict)
-    relationships: Dict[str, Dict[str, float]] = field(default_factory=dict)
-    confidence: float = 0.0
-    source_context: str = ""
-    
-    def similarity(self, other: 'SemanticVector') -> float:
-        """Calculate semantic similarity using cosine similarity"""
-        if not self.concepts or not other.concepts:
-            return 0.0
-        
-        common_concepts = set(self.concepts.keys()) & set(other.concepts.keys())
-        if not common_concepts:
-            return 0.0
-        
-        dot_product = sum(self.concepts[c] * other.concepts[c] for c in common_concepts)
-        magnitude_self = math.sqrt(sum(v**2 for v in self.concepts.values()))
-        magnitude_other = math.sqrt(sum(v**2 for v in other.concepts.values()))
-        
-        if magnitude_self == 0 or magnitude_other == 0:
-            return 0.0
-        
-        return dot_product / (magnitude_self * magnitude_other)
-
-@dataclass
-class ContextualEntity:
-    """Dynamic entity with contextual understanding"""
-    text: str
-    entity_type: str
-    semantic_vector: SemanticVector
-    context_window: str
-    confidence: float
-    relationships: List[Tuple[str, float]] = field(default_factory=list)
-    temporal_markers: List[str] = field(default_factory=list)
-    quantitative_markers: List[Dict[str, Any]] = field(default_factory=list)
-    emotional_markers: Dict[str, float] = field(default_factory=dict)
-
-@dataclass
-class DynamicBusinessProfile:
-    """Completely dynamic business profile built from contextual analysis"""
-    industry_vectors: Dict[str, SemanticVector] = field(default_factory=dict)
-    market_dynamics: Dict[str, Any] = field(default_factory=dict)
-    competitive_intelligence: Dict[str, Any] = field(default_factory=dict)
-    growth_indicators: Dict[str, float] = field(default_factory=dict)
-    risk_profile: Dict[str, float] = field(default_factory=dict)
-    opportunity_matrix: Dict[str, Dict[str, float]] = field(default_factory=dict)
-    behavioral_patterns: Dict[str, Any] = field(default_factory=dict)
-    value_architecture: Dict[str, SemanticVector] = field(default_factory=dict)
-    
-class DynamicIntelligenceEngine:
-    """Advanced intelligence engine for real-time pattern recognition"""
-    
-    def __init__(self):
-        self.pattern_memory: Dict[str, Dict[str, Any]] = defaultdict(dict)
-        self.learning_cache: Dict[str, Any] = {}
-        self.semantic_networks: Dict[str, Dict[str, SemanticVector]] = defaultdict(dict)
-        self.context_correlations: Dict[str, Dict[str, float]] = defaultdict(dict)
-        self.success_patterns: Dict[str, Dict[str, Any]] = {}
-        self.adaptation_weights: Dict[str, float] = defaultdict(lambda: 1.0)
-        self.lock = threading.RLock()
-        
-    def learn_pattern(self, context: str, pattern: Dict[str, Any], outcome_score: float = 0.5):
-        """Learn and store patterns for future analysis improvement"""
-        with self.lock:
-            pattern_hash = self._generate_pattern_hash(context, pattern)
-            
-            if pattern_hash not in self.pattern_memory[context]:
-                self.pattern_memory[context][pattern_hash] = {
-                    'pattern': pattern,
-                    'frequency': 0,
-                    'success_rate': [],
-                    'adaptations': [],
-                    'first_seen': datetime.now().isoformat(),
-                    'last_updated': datetime.now().isoformat()
-                }
-            
-            pattern_data = self.pattern_memory[context][pattern_hash]
-            pattern_data['frequency'] += 1
-            pattern_data['success_rate'].append(outcome_score)
-            pattern_data['last_updated'] = datetime.now().isoformat()
-            
-            # Update adaptation weights based on success
-            avg_success = sum(pattern_data['success_rate']) / len(pattern_data['success_rate'])
-            self.adaptation_weights[pattern_hash] = max(0.1, min(2.0, avg_success * 2))
-    
-    def retrieve_similar_patterns(self, context: str, current_pattern: Dict[str, Any], 
-                                similarity_threshold: float = 0.7) -> List[Dict[str, Any]]:
-        """Retrieve similar patterns from memory for adaptive learning"""
-        similar_patterns = []
-        current_vector = self._pattern_to_vector(current_pattern)
-        
-        with self.lock:
-            for pattern_hash, pattern_data in self.pattern_memory[context].items():
-                stored_vector = self._pattern_to_vector(pattern_data['pattern'])
-                similarity = current_vector.similarity(stored_vector)
-                
-                if similarity >= similarity_threshold:
-                    similar_patterns.append({
-                        'pattern': pattern_data['pattern'],
-                        'similarity': similarity,
-                        'success_rate': sum(pattern_data['success_rate']) / len(pattern_data['success_rate']) if pattern_data['success_rate'] else 0.5,
-                        'frequency': pattern_data['frequency'],
-                        'weight': self.adaptation_weights[pattern_hash]
-                    })
-        
-        return sorted(similar_patterns, key=lambda x: x['similarity'] * x['weight'], reverse=True)
-    
-    def _generate_pattern_hash(self, context: str, pattern: Dict[str, Any]) -> str:
-        """Generate unique hash for pattern identification"""
-        pattern_str = json.dumps(pattern, sort_keys=True)
-        return hashlib.md5(f"{context}:{pattern_str}".encode()).hexdigest()
-    
-    def _pattern_to_vector(self, pattern: Dict[str, Any]) -> SemanticVector:
-        """Convert pattern to semantic vector for comparison"""
-        concepts = {}
-        for key, value in pattern.items():
-            if isinstance(value, (str, int, float)):
-                concepts[f"{key}:{str(value)[:50]}"] = 1.0
-            elif isinstance(value, (list, dict)):
-                concepts[f"{key}:complex"] = 0.5
-        
-        return SemanticVector(concepts=concepts, confidence=0.8)
 
 class UltraDynamicGoalParser:
     """
@@ -519,17 +151,21 @@ class UltraDynamicGoalParser:
     def __init__(self):
         self.config_manager = get_config_manager()
         
-        self.intelligence_engine = DynamicIntelligenceEngine()
+        # Use shared modular services
+        self.intelligence_engine = get_intelligence_engine()
+        self.semantic_analyzer = SemanticAnalyzer()
+        self.strategic_synthesizer = get_strategic_synthesizer()
+        self.adaptive_learner = get_adaptive_learner()
+        
+        # Real-time market data sources
+        self.market_data_engine = get_market_data_engine()
+        self.user_interaction_tracker = UserInteractionTracker()
+        self.contextual_learner = ContextualLearner()
+        
+        # Keep legacy components for now (will be updated in future iterations)
         self.semantic_processor = SemanticProcessor()
         self.context_analyzer = ContextualAnalyzer()
         self.pattern_recognizer = PatternRecognizer()
-        self.strategic_synthesizer = StrategicSynthesizer()
-        self.adaptive_learner = AdaptiveLearner()
-        
-        # Real-time market data sources
-        self.market_data_engine = MarketDataEngine()
-        self.user_interaction_tracker = UserInteractionTracker()
-        self.contextual_learner = ContextualLearner()
         
         self.session_context: Dict[str, Any] = {}
         self.analysis_cache: Dict[str, Any] = {}
@@ -603,7 +239,7 @@ class UltraDynamicGoalParser:
     def _build_analysis_context(self, goal_text: str, business_type: str, target_audience: str,
                               budget: float, timeline: str, additional_context: Dict[str, Any]) -> Dict[str, Any]:
         """Build comprehensive analysis context from all inputs"""
-        context = {
+        context: Dict[str, Any] = {
             'primary_inputs': {
                 'goal_text': goal_text,
                 'business_type': business_type,
@@ -727,7 +363,7 @@ class UltraDynamicGoalParser:
         # Extract numeric time expressions
         time_numbers = re.findall(r'(\d+)\s*(day|week|month|quarter|year)s?', timeline.lower())
         
-        temporal_data = {
+        temporal_data: Dict[str, Any] = {
             'numeric_expressions': time_numbers,
             'time_units': [],
             'relative_expressions': []
@@ -786,7 +422,7 @@ class UltraDynamicGoalParser:
             return 0.5
         
         # Calculate urgency based on time units
-        urgencies = []
+        urgencies: List[float] = []
         for time_unit in temporal_analysis['time_units']:
             urgency = time_unit['urgency_factor']
             urgencies.append(urgency)
@@ -1119,7 +755,7 @@ class UltraDynamicGoalParser:
             strategic_synthesis, business_profile, learned_insights
         )
         
-        result = {
+        result: Dict[str, Any] = {
             # Core analysis results
             'primary_intent': primary_intent,
             'secondary_intents': strategic_synthesis.get('secondary_directions', []),
@@ -1160,7 +796,7 @@ class UltraDynamicGoalParser:
     
     def _learn_from_analysis(self, result: Dict[str, Any], context: Dict[str, Any]):
         """Learn from analysis to improve future parsing"""
-        learning_pattern = {
+        learning_pattern: Dict[str, Any] = {
             'input_characteristics': {
                 'text_complexity': context['derived_context']['text_complexity'],
                 'budget_scale': context['derived_context']['budget_scale'],
@@ -1332,7 +968,7 @@ class ContextualAnalyzer:
     
     def recognize_contextual_entities(self, semantic_intelligence: Dict[str, Any]) -> List[ContextualEntity]:
         """Recognize entities within context"""
-        entities = []
+        entities: List[ContextualEntity] = []
         
         for concept, weight in semantic_intelligence['concepts'].items():
             if weight > 0.5:  # High-confidence concepts only
@@ -1414,162 +1050,6 @@ class PatternRecognizer:
             'strategic_focus': 'goal_oriented' if objective_entities else 'action_oriented' if action_entities else 'exploratory',
             'complexity_level': context['derived_context']['text_complexity'],
             'strategic_clarity': len(objective_entities) / max(1, len(entities))
-        }
-
-class StrategicSynthesizer:
-    """Synthesizes strategic insights from all analyses"""
-    
-    def synthesize_strategy(self, business_profile: DynamicBusinessProfile,
-                          patterns: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
-        """Synthesize comprehensive strategic insights"""
-        
-        # Determine primary strategic direction
-        primary_direction = self._determine_primary_direction(patterns, context)
-        
-        # Identify secondary directions
-        secondary_directions = self._identify_secondary_directions(patterns, business_profile)
-        
-        # Calculate strategic confidence
-        confidence = self._calculate_strategic_confidence(patterns, business_profile)
-        
-        return {
-            'primary_strategic_direction': primary_direction,
-            'secondary_directions': secondary_directions,
-            'confidence': confidence,
-            'strategic_focus': patterns['strategic_patterns']['strategic_focus'],
-            'recommended_approach': self._recommend_approach(patterns, context)
-        }
-    
-    def _determine_primary_direction(self, patterns: Dict[str, Any], context: Dict[str, Any]) -> str:
-        """Determine primary strategic direction"""
-        goal_text = context['primary_inputs']['goal_text'].lower()
-        
-        direction_indicators = {
-            'growth_strategy': ['grow', 'expand', 'increase', 'scale'],
-            'optimization_strategy': ['optimize', 'improve', 'enhance', 'efficiency'],
-            'acquisition_strategy': ['acquire', 'capture', 'win', 'gain'],
-            'retention_strategy': ['retain', 'keep', 'maintain', 'loyalty'],
-            'innovation_strategy': ['innovate', 'create', 'develop', 'launch']
-        }
-        
-        direction_scores = {}
-        for direction, indicators in direction_indicators.items():
-            score = sum(1 for indicator in indicators if indicator in goal_text)
-            direction_scores[direction] = score
-        
-        if not direction_scores or max(direction_scores.values()) == 0:
-            return 'comprehensive_business_strategy'
-        
-        return max(direction_scores.items(), key=lambda x: x[1])[0]
-    
-    def _identify_secondary_directions(self, patterns: Dict[str, Any], profile: DynamicBusinessProfile) -> List[str]:
-        """Identify secondary strategic directions"""
-        secondary = []
-        
-        # Based on opportunity matrix
-        for opportunity, metrics in profile.opportunity_matrix.items():
-            if metrics.get('priority', 0) > 0.6:
-                secondary.append(f"{opportunity}_initiative")
-        
-        # Based on risk mitigation needs
-        high_risks = [risk for risk, level in profile.risk_profile.items() if level > 0.6]
-        for risk in high_risks:
-            secondary.append(f"{risk}_mitigation")
-        
-        return secondary[:3]  # Limit to top 3
-    
-    def _calculate_strategic_confidence(self, patterns: Dict[str, Any], profile: DynamicBusinessProfile) -> float:
-        """Calculate confidence in strategic synthesis"""
-        pattern_clarity = patterns['strategic_patterns']['strategic_clarity']
-        growth_potential = sum(profile.growth_indicators.values()) / len(profile.growth_indicators) if profile.growth_indicators else 0.5
-        risk_level = sum(profile.risk_profile.values()) / len(profile.risk_profile) if profile.risk_profile else 0.5
-        
-        return min(1.0, pattern_clarity * 0.4 + growth_potential * 0.3 + (1 - risk_level) * 0.3)
-    
-    def _recommend_approach(self, patterns: Dict[str, Any], context: Dict[str, Any]) -> str:
-        """Recommend strategic approach"""
-        urgency = context['derived_context']['timeline_urgency']
-        budget_scale = context['derived_context']['budget_scale']
-        complexity = context['derived_context']['text_complexity']
-        
-        if urgency > 0.7 and complexity < 0.5:
-            return 'rapid_execution'
-        elif budget_scale in ['large_budget', 'enterprise_budget']:
-            return 'comprehensive_transformation'
-        elif complexity > 0.7:
-            return 'phased_implementation'
-        else:
-            return 'balanced_approach'
-
-class AdaptiveLearner:
-    """Generates adaptive insights using learned patterns"""
-    
-    def generate_adaptive_insights(self, strategic_synthesis: Dict[str, Any],
-                                 context: Dict[str, Any],
-                                 intelligence_engine: DynamicIntelligenceEngine) -> Dict[str, Any]:
-        """Generate insights using adaptive learning"""
-        
-        # Create pattern for similarity search
-        current_pattern = {
-            'strategic_direction': strategic_synthesis['primary_strategic_direction'],
-            'budget_scale': context['derived_context']['budget_scale'],
-            'timeline_urgency': context['derived_context']['timeline_urgency'],
-            'text_complexity': context['derived_context']['text_complexity']
-        }
-        
-        # Retrieve similar patterns
-        similar_patterns = intelligence_engine.retrieve_similar_patterns(
-            'strategic_analysis', current_pattern, similarity_threshold=0.6
-        )
-        
-        # Generate adaptive insights
-        insights = self._synthesize_adaptive_insights(similar_patterns, strategic_synthesis)
-        
-        return {
-            'success_indicators': insights['success_indicators'],
-            'measurable_outcomes': insights['measurable_outcomes'],
-            'pattern_matches': len(similar_patterns),
-            'adaptation_confidence': insights['confidence'],
-            'learned_optimizations': insights['optimizations']
-        }
-    
-    def _synthesize_adaptive_insights(self, similar_patterns: List[Dict[str, Any]],
-                                    strategic_synthesis: Dict[str, Any]) -> Dict[str, Any]:
-        """Synthesize insights from similar patterns"""
-        if not similar_patterns:
-            return {
-                'success_indicators': ['goal_achievement'],
-                'measurable_outcomes': ['performance_improvement'],
-                'confidence': 0.3,
-                'optimizations': ['data_driven_optimization']
-            }
-        
-        # Extract common success patterns
-        high_success_patterns = [p for p in similar_patterns if p['success_rate'] > 0.7]
-        
-        success_indicators = []
-        measurable_outcomes = []
-        
-        # Extract insights from successful patterns
-        for pattern in high_success_patterns:
-            # This would extract actual insights from stored patterns in production
-            success_indicators.extend(['roi_improvement', 'goal_achievement'])
-            measurable_outcomes.extend(['revenue_increase', 'efficiency_gain'])
-        
-        # Remove duplicates and limit
-        success_indicators = list(set(success_indicators))[:5]
-        measurable_outcomes = list(set(measurable_outcomes))[:5]
-        
-        # Calculate confidence based on pattern success rates
-        avg_success_rate = sum(p['success_rate'] for p in similar_patterns) / len(similar_patterns)
-        pattern_weight = sum(p['weight'] for p in similar_patterns) / len(similar_patterns)
-        confidence = min(1.0, avg_success_rate * 0.7 + pattern_weight * 0.3)
-        
-        return {
-            'success_indicators': success_indicators if success_indicators else ['goal_achievement'],
-            'measurable_outcomes': measurable_outcomes if measurable_outcomes else ['performance_improvement'],
-            'confidence': confidence,
-            'optimizations': ['adaptive_optimization', 'pattern_based_tuning']
         }
 
 # Create instance for backward compatibility

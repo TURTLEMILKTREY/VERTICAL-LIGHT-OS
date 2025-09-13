@@ -1,0 +1,44 @@
+{
+    "pattern_recognition": {
+        "default_outcome_score": 0.5,
+        "similarity_threshold_default": 0.7,
+        "max_adaptation_weight": 2.0,
+        "min_adaptation_weight": 0.1,
+        "adaptation_multiplier": 2.0,
+        "success_weight_factor": 2.0
+    },
+    "semantic_analysis": {
+        "default_semantic_confidence": 0.8,
+        "relationship_threshold": 0.6,
+        "complex_data_weight": 0.5,
+        "semantic_relationship_threshold": 0.6
+    },
+    "complexity_assessment": {
+        "data_volume_normalizer": 1000.0,
+        "key_diversity_normalizer": 20.0,
+        "nesting_depth_normalizer": 10.0,
+        "max_recursion_depth": 5,
+        "max_complexity_score": 1.0,
+        "context_truncate_length": 100,
+        "pattern_truncate_length": 100
+    },
+    "pattern_matching": {
+        "simple_similarity_threshold": 0.3,
+        "max_pattern_matches": 10,
+        "default_success_rate": 0.5,
+        "pattern_hash_truncate": 100
+    },
+    "adaptation_recommendations": {
+        "high_complexity_threshold": 0.7,
+        "low_complexity_threshold": 0.3,
+        "complexity_reduction_confidence": 0.8,
+        "detail_enhancement_confidence": 0.7
+    },
+    "confidence_assessment": {
+        "data_completeness_normalizer": 10.0,
+        "pattern_recognition_normalizer": 10.0,
+        "default_semantic_clarity": 0.5,
+        "max_confidence": 1.0,
+        "word_length_normalizer": 10.0
+    }
+}
