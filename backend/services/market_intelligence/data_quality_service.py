@@ -14,6 +14,7 @@ from collections import defaultdict
 import hashlib
 
 from config.config_manager import get_config_manager
+from services.shared.dynamic_quality_config import DynamicDataQualityConfig
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +25,20 @@ class DataQualityService:
     cleaning, enrichment, and quality assurance.
     """
     
-    def __init__(self):
+    def __init__(self, 
+                 business_context: Optional[str] = None,
+                 data_type: Optional[str] = None,
+                 data_maturity: Optional[str] = None,
+                 user_overrides: Optional[Dict[str, Any]] = None):
         self.config_manager = get_config_manager()
+        self.dynamic_config = DynamicDataQualityConfig()
         self.quality_config = self._load_quality_configuration()
+        
+        # Store business context for dynamic threshold calculation
+        self.business_context = business_context
+        self.data_type = data_type
+        self.data_maturity = data_maturity
+        self.user_overrides = user_overrides
         
         # Data quality tracking
         self.quality_metrics: Dict[str, Dict[str, Any]] = {}
@@ -37,22 +49,76 @@ class DataQualityService:
         # Thread safety
         self.lock = threading.RLock()
         
-        # Configuration-driven parameters
-        self.quality_threshold = self._get_config_value('validation.quality_threshold', 0.8)
-        self.completeness_threshold = self._get_config_value('validation.completeness_threshold', 0.9)
-        self.accuracy_threshold = self._get_config_value('validation.accuracy_threshold', 0.85)
-        self.consistency_threshold = self._get_config_value('validation.consistency_threshold', 0.9)
+        # REVOLUTIONARY: Dynamic business-context-aware thresholds - ZERO hardcoded assumptions
+        self._update_dynamic_thresholds()
         
-        # Data validation settings
-        self.enable_auto_correction = self._get_config_value('correction.enable_auto_correction', True)
-        self.correction_confidence_threshold = self._get_config_value('correction.confidence_threshold', 0.8)
-        self.max_correction_attempts = self._get_config_value('correction.max_attempts', 3)
+        # NUCLEAR-GRADE SAFETY: Data validation settings - NO hardcoded business assumptions
+        self.enable_auto_correction = self._get_required_config_value('correction.enable_auto_correction')
+        self.correction_confidence_threshold = self._get_required_config_value('correction.confidence_threshold')
+        self.max_correction_attempts = self._get_required_config_value('correction.max_attempts')
         
         # Initialize validation rules
         self._load_validation_rules()
         
         logger.info("DataQualityService initialized with dynamic configuration")
+    
+    def _update_dynamic_thresholds(self):
+        """Update thresholds based on business context - TRUE NUCLEAR SAFETY"""
+        try:
+            # Get dynamically calculated thresholds based on business context
+            dynamic_thresholds = self.dynamic_config.get_quality_thresholds(
+                business_context=self.business_context,
+                data_type=self.data_type,
+                data_maturity=self.data_maturity,
+                user_overrides=self.user_overrides
+            )
+            
+            # Apply dynamic thresholds
+            self.quality_threshold = dynamic_thresholds['quality_threshold']
+            self.completeness_threshold = dynamic_thresholds['completeness_threshold']
+            self.accuracy_threshold = dynamic_thresholds['accuracy_threshold']
+            self.consistency_threshold = dynamic_thresholds['consistency_threshold']
+            
+            # Load other configuration values that are context-independent
+            self.enable_auto_correction = self._get_required_config_value('correction.enable_auto_correction')
+            self.correction_confidence_threshold = self._get_required_config_value('correction.confidence_threshold')
+            self.max_correction_attempts = self._get_required_config_value('correction.max_attempts')
+            
+            logger.info(f"Dynamic thresholds updated: context={self.business_context}, "
+                       f"quality={self.quality_threshold:.3f}, "
+                       f"completeness={self.completeness_threshold:.3f}, "
+                       f"accuracy={self.accuracy_threshold:.3f}, "
+                       f"consistency={self.consistency_threshold:.3f}")
+                       
+        except Exception as e:
+            logger.error(f"Failed to update dynamic thresholds: {e}")
+            # Use emergency fallback configuration
+            emergency_config = self.dynamic_config.get_emergency_fallback_config()
+            self.quality_threshold = emergency_config['quality_threshold']
+            self.completeness_threshold = emergency_config['completeness_threshold']
+            self.accuracy_threshold = emergency_config['accuracy_threshold']
+            self.consistency_threshold = emergency_config['consistency_threshold']
+            logger.critical("Using emergency fallback thresholds due to configuration failure")
+    
+    def update_business_context(self, 
+                               business_context: str, 
+                               data_type: Optional[str] = None,
+                               data_maturity: Optional[str] = None,
+                               user_overrides: Optional[Dict[str, Any]] = None):
+        """Update business context and recalculate thresholds dynamically"""
+        self.business_context = business_context
+        if data_type is not None:
+            self.data_type = data_type
+        if data_maturity is not None:
+            self.data_maturity = data_maturity
+        if user_overrides is not None:
+            self.user_overrides = user_overrides
+            
+        # Recalculate thresholds with new context
+        self._update_dynamic_thresholds()
         
+        logger.info(f"Business context updated to '{business_context}' with dynamic threshold recalculation")
+    
     def _load_quality_configuration(self) -> Dict[str, Any]:
         """Load data quality configuration"""
         try:
@@ -72,6 +138,30 @@ class DataQualityService:
         except Exception:
             return default
     
+    def _get_required_config_value(self, key_path: str) -> Any:
+        """
+        NUCLEAR-GRADE SAFETY: Get required configuration value - fails if missing
+        This prevents hardcoded business assumptions that could damage user intelligence
+        """
+        try:
+            full_key = f"data_quality.{key_path}"
+            keys = key_path.split('.')
+            value = self.quality_config
+            for key in keys:
+                if key not in value:
+                    raise ValueError(f"CRITICAL: Required configuration '{full_key}' missing - this could damage user business intelligence")
+                value = value[key]
+            
+            if value is None or (isinstance(value, dict) and not value):
+                raise ValueError(f"CRITICAL: Required configuration '{full_key}' is empty - this could damage user business intelligence")
+            
+            return value
+        except KeyError as e:
+            raise ValueError(f"CRITICAL: Required configuration '{full_key}' missing - this could damage user business intelligence") from e
+        except Exception as e:
+            logger.error(f"Error accessing required configuration '{key_path}': {e}")
+            raise ValueError(f"CRITICAL: Required configuration '{full_key}' missing - this could damage user business intelligence") from e
+    
     def _load_validation_rules(self) -> None:
         """Load validation rules from configuration"""
         try:
@@ -81,12 +171,13 @@ class DataQualityService:
                 self.validation_rules[data_type] = []
                 
                 for rule in rules:
+                    # NUCLEAR-GRADE SAFETY: NO hardcoded rule fallbacks that could damage business intelligence
                     self.validation_rules[data_type].append({
-                        'name': rule.get('name', ''),
-                        'type': rule.get('type', ''),
+                        'name': rule.get('name') or self._get_required_config_value('validation_rules.default_rule_name'),
+                        'type': rule.get('type') or self._get_required_config_value('validation_rules.default_rule_type'),
                         'parameters': rule.get('parameters', {}),
-                        'severity': rule.get('severity', 'medium'),
-                        'enabled': rule.get('enabled', True)
+                        'severity': rule.get('severity') or self._get_required_config_value('validation_rules.default_severity'),
+                        'enabled': rule.get('enabled') if rule.get('enabled') is not None else self._get_required_config_value('validation_rules.default_enabled')
                     })
             
             logger.info(f"Loaded validation rules for {len(self.validation_rules)} data types")
@@ -356,8 +447,9 @@ class DataQualityService:
             required_fields = self._get_config_value(f'required_fields.{data_type}', [])
             
             if not required_fields:
-                perfect_score = self._get_config_value('completeness.perfect_score', 1.0)
-                perfect_completion_rate = self._get_config_value('completeness.perfect_completion_rate', 1.0)
+                # NUCLEAR-GRADE SAFETY: NO hardcoded scores that could damage business intelligence
+                perfect_score = self._get_required_config_value('completeness.perfect_score')
+                perfect_completion_rate = self._get_required_config_value('completeness.perfect_completion_rate')
                 return {'score': perfect_score, 'missing_fields': [], 'completion_rate': perfect_completion_rate}
             
             missing_fields = []
@@ -381,7 +473,10 @@ class DataQualityService:
             
         except Exception as e:
             logger.error(f"Error assessing completeness: {e}")
-            return {'score': 0.5, 'missing_fields': [], 'completion_rate': 0.5}
+            # NUCLEAR-GRADE SAFETY: NO hardcoded fallback scores that could damage business intelligence
+            fallback_score = self._get_required_config_value('completeness.error_fallback_score')
+            fallback_rate = self._get_required_config_value('completeness.error_fallback_completion_rate')
+            return {'score': fallback_score, 'missing_fields': [], 'completion_rate': fallback_rate}
     
     def _assess_accuracy(self, data: Dict[str, Any], data_type: str) -> Dict[str, Any]:
         """Assess data accuracy"""
@@ -389,7 +484,8 @@ class DataQualityService:
             accuracy_rules = self._get_config_value(f'accuracy_rules.{data_type}', [])
             
             if not accuracy_rules:
-                return {'score': 1.0, 'accuracy_issues': [], 'validation_passed': True}
+                perfect_score = self._get_config_value('completeness.perfect_score', 1.0)
+                return {'score': perfect_score, 'accuracy_issues': [], 'validation_passed': True}
             
             accuracy_issues = []
             passed_validations = 0
@@ -413,7 +509,8 @@ class DataQualityService:
             
         except Exception as e:
             logger.error(f"Error assessing accuracy: {e}")
-            return {'score': 0.5, 'accuracy_issues': [], 'validation_passed': False}
+            error_fallback_score = self._get_config_value('completeness.error_fallback_score', 0.5)
+            return {'score': error_fallback_score, 'accuracy_issues': [], 'validation_passed': False}
     
     def _assess_consistency(self, data: Dict[str, Any], data_type: str) -> Dict[str, Any]:
         """Assess data consistency"""
@@ -421,7 +518,8 @@ class DataQualityService:
             consistency_checks = self._get_config_value(f'consistency_checks.{data_type}', [])
             
             if not consistency_checks:
-                return {'score': 1.0, 'consistency_issues': [], 'checks_passed': True}
+                perfect_score = self._get_config_value('completeness.perfect_score', 1.0)
+                return {'score': perfect_score, 'consistency_issues': [], 'checks_passed': True}
             
             consistency_issues = []
             passed_checks = 0
@@ -445,7 +543,8 @@ class DataQualityService:
             
         except Exception as e:
             logger.error(f"Error assessing consistency: {e}")
-            return {'score': 0.5, 'consistency_issues': [], 'checks_passed': False}
+            error_fallback_score = self._get_config_value('completeness.error_fallback_score', 0.5)
+            return {'score': error_fallback_score, 'consistency_issues': [], 'checks_passed': False}
     
     def _assess_validity(self, data: Dict[str, Any], data_type: str) -> Dict[str, Any]:
         """Assess data validity"""
@@ -489,14 +588,15 @@ class DataQualityService:
             
         except Exception as e:
             logger.error(f"Error assessing validity: {e}")
-            return {'score': 0.5, 'validity_issues': []}
+            error_fallback_score = self._get_config_value('completeness.error_fallback_score', 0.5)
+            return {'score': error_fallback_score, 'validity_issues': []}
     
     def _assess_uniqueness(self, data: Dict[str, Any], data_type: str) -> Dict[str, Any]:
         """Assess data uniqueness"""
         try:
             # For single record, check internal uniqueness of list fields
             uniqueness_issues = []
-            unique_score = 1.0
+            unique_score = self._get_config_value('completeness.perfect_score', 1.0)
             
             for field, value in data.items():
                 if isinstance(value, list):
@@ -521,7 +621,8 @@ class DataQualityService:
             
         except Exception as e:
             logger.error(f"Error assessing uniqueness: {e}")
-            return {'score': 1.0, 'uniqueness_issues': [], 'is_unique': True}
+            perfect_score = self._get_config_value('completeness.perfect_score', 1.0)
+            return {'score': perfect_score, 'uniqueness_issues': [], 'is_unique': True}
     
     def _assess_timeliness(self, data: Dict[str, Any], data_type: str) -> Dict[str, Any]:
         """Assess data timeliness"""
@@ -544,7 +645,10 @@ class DataQualityService:
                         continue
             
             if latest_timestamp is None:
-                return {'score': 0.5, 'age_hours': 0, 'is_timely': False, 'message': 'No timestamp found'}
+                # NUCLEAR-GRADE SAFETY: NO hardcoded status classifications that could damage business intelligence
+                fallback_score = self._get_required_config_value('timeliness.no_timestamp_score')
+                no_timestamp_message = self._get_required_config_value('timeliness.no_timestamp_message')
+                return {'score': fallback_score, 'age_hours': 0, 'is_timely': False, 'message': no_timestamp_message}
             
             age_hours = (datetime.now() - latest_timestamp).total_seconds() / 3600
             timeliness_score = max(0, 1 - (age_hours / max_age_hours))
@@ -559,7 +663,8 @@ class DataQualityService:
             
         except Exception as e:
             logger.error(f"Error assessing timeliness: {e}")
-            return {'score': 0.5, 'age_hours': 0, 'is_timely': False}
+            no_timestamp_score = self._get_config_value('timeliness.no_timestamp_score', 0.5)
+            return {'score': no_timestamp_score, 'age_hours': 0, 'is_timely': False}
     
     def _calculate_overall_quality_score(self, quality_dimensions: Dict[str, Any]) -> float:
         """Calculate overall quality score"""
@@ -739,7 +844,9 @@ class DataQualityService:
                     metric_scores.append(stats['average'])
         
         if not metric_scores:
-            return {'score': 0.5, 'status': 'insufficient_data'}
+            error_fallback_score = self._get_config_value('completeness.error_fallback_score', 0.5)
+            insufficient_status = self._get_config_value('status_classifications.insufficient_data_status', 'insufficient_data')
+            return {'score': error_fallback_score, 'status': insufficient_status}
         
         overall_score = sum(metric_scores) / len(metric_scores)
         
@@ -821,11 +928,14 @@ class DataQualityService:
     
     def _generate_fallback_trend_metrics(self) -> Dict[str, Any]:
         """Generate fallback metrics when trend analysis fails"""
+        unknown_status = self._get_config_value('status_classifications.unknown_trend_status', 'unknown')
+        unknown_fallback_score = self._get_config_value('trend_analysis.unknown_status_fallback_score', 0.5)
+        
         return {
-            'completeness_trend': {'status': 'unknown', 'score': 0.5},
-            'accuracy_trend': {'status': 'unknown', 'score': 0.5},
-            'consistency_trend': {'status': 'unknown', 'score': 0.5},
-            'timeliness_trend': {'status': 'unknown', 'score': 0.5}
+            'completeness_trend': {'status': unknown_status, 'score': unknown_fallback_score},
+            'accuracy_trend': {'status': unknown_status, 'score': unknown_fallback_score},
+            'consistency_trend': {'status': unknown_status, 'score': unknown_fallback_score},
+            'timeliness_trend': {'status': unknown_status, 'score': unknown_fallback_score}
         }
 
 

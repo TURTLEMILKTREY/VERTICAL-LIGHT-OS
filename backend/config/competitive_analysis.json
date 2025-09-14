@@ -1,0 +1,141 @@
+{
+  "competitive_analysis": {
+    "analysis": {
+      "depth_level": "comprehensive",
+      "confidence_threshold": 0.7,
+      "max_competitors_tracked": 50,
+      "unknown_industry_fallback": "general_business",
+      "safe_fallback_industry": "technology"
+    },
+    "monitoring": {
+      "update_frequency_hours": 24,
+      "competitor_monitoring_error_message": "Competitor monitoring temporarily unavailable"
+    },
+    "market": {
+      "significant_share_threshold": 0.05
+    },
+    "threat_assessment": {
+      "factors": ["market_share", "growth_rate", "innovation_capability", "financial_strength"]
+    },
+    "calculations": {
+      "percentage_multiplier": 100,
+      "hhi_exponent": 2,
+      "gini_multiplier": 2,
+      "position_offset": 1,
+      "gini_min_bound": 0.0,
+      "gini_max_bound": 1.0,
+      "ranking_offset": 1,
+      "variance_exponent": 2,
+      "sqrt_exponent": 0.5
+    },
+    "opportunity_types": {
+      "competitor_weakness_exploitation": "exploit_weakness",
+      "capability_development": "develop_capability", 
+      "underserved_segment": "target_underserved",
+      "differentiation": "differentiate_offering",
+      "market_positioning": "reposition_market",
+      "competitive_response": "respond_competitively"
+    },
+    "market_gaps": {
+      "premium_segment_detection_enabled": true,
+      "missing_premium_segment_classification": "missing_premium_opportunity",
+      "pricing_range_diversity_threshold": 0.3,
+      "limited_pricing_range_classification": "limited_price_diversity",
+      "narrow_market_focus_classification": "narrow_focus_gap"
+    },
+    "market_segments": {
+      "premium_segment_keyword": "premium"
+    },
+    "change_direction": {
+      "positive_threshold": 0,
+      "negative_threshold": 0,
+      "zero_baseline_threshold": 0,
+      "increase_classification": "increase",
+      "decrease_classification": "decrease", 
+      "stable_classification": "stable",
+      "new_metric_classification": "new"
+    },
+    "key_players": {
+      "max_count": 10
+    },
+    "market_structure": {
+      "oligopoly_top_companies_count": 5,
+      "top_3_analysis_count": 3,
+      "top_5_analysis_count": 5,
+      "error_fallback_market_type": "fragmented",
+      "monopoly_classification": "monopoly",
+      "oligopoly_classification": "oligopoly", 
+      "fragmented_classification": "fragmented",
+      "concentration_threshold_high": 0.8,
+      "concentration_threshold_medium": 0.6
+    },
+    "market_evolution": {
+      "medium_growth_threshold": 0.1,
+      "low_competitor_threshold": 5,
+      "high_growth_classification": "high_growth",
+      "medium_growth_classification": "medium_growth",
+      "stable_classification": "stable",
+      "declining_classification": "declining"
+    },
+    "consolidation": {
+      "high_count_threshold": 20,
+      "no_market_data_risk_level": "unknown"
+    },
+    "intensity_levels": {
+      "high": "high",
+      "medium": "medium", 
+      "low": "low"
+    },
+    "competitor_analysis": {
+      "innovation_leadership_threshold": 0.8,
+      "leader_threshold": 0.7
+    },
+    "opportunity_analysis": {
+      "high_priority_market_share_threshold": 0.15
+    },
+    "priorities": {
+      "high": "high",
+      "medium": "medium",
+      "low": "low"
+    },
+    "positioning": {
+      "default_market_position": "neutral"
+    },
+    "competitive_advantages": {
+      "high_innovation_classification": "innovation_leader",
+      "broad_coverage_classification": "market_coverage",
+      "product_variety_classification": "product_diversity",
+      "focused_approach_classification": "niche_focus"
+    },
+    "portfolio_strength": {
+      "default_market_fit": 0.5
+    },
+    "pricing": {
+      "no_data_strategy": "market_research_required",
+      "premium_classification": "premium",
+      "penetration_classification": "penetration", 
+      "competitive_classification": "competitive"
+    },
+    "strategic_changes": {
+      "new_initiatives_detected_message": "New strategic initiatives detected"
+    },
+    "strategic_moves": {
+      "unknown_type_fallback": "strategic_initiative"
+    },
+    "portfolio": {
+      "medium_threshold": 0.6
+    },
+    "marketing": {
+      "unknown_positioning_fallback": "standard_positioning"
+    },
+    "status_codes": {
+      "error_status": "error"
+    },
+    "disruption_types": {
+      "innovation_classification": "innovation"
+    },
+    "leader_identification": {
+      "max_leaders": 5
+    }
+  }
+}
