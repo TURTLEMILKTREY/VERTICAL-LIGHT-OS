@@ -7,7 +7,8 @@ Complete microservices architecture for AI-powered market intelligence
 # Core market intelligence services
 from .intelligence_engine import MarketIntelligenceEngine, get_intelligence_engine
 from .competitive_analysis_service import CompetitiveAnalysisService, get_competitive_analysis_service
-from .data_quality_service import DataQualityService, get_data_quality_service
+from .data_quality_service_dynamic import DynamicDataQualityService, create_personalized_data_quality_service
+from .progressive_intelligence_framework import ProgressiveIntelligenceEngine, create_progressive_intelligence_system, enhance_data_quality_with_intelligence
 from .intelligence_orchestrator import IntelligenceOrchestrator, get_intelligence_orchestrator
 from .risk_assessment_service import RiskAssessmentService, get_risk_assessment_service
 from .trend_analysis_service import TrendAnalysisService, get_trend_analysis_service
@@ -28,7 +29,7 @@ def get_all_intelligence_services():
     return {
         'intelligence_engine': get_intelligence_engine(),
         'competitive_analysis': get_competitive_analysis_service(),
-        'data_quality': get_data_quality_service(),
+        'data_quality': create_personalized_data_quality_service(),
         'intelligence_orchestrator': get_intelligence_orchestrator(),
         'risk_assessment': get_risk_assessment_service(),
         'trend_analysis': get_trend_analysis_service(),
@@ -55,7 +56,8 @@ __all__ = [
     # Service classes
     'MarketIntelligenceEngine',
     'CompetitiveAnalysisService', 
-    'DataQualityService',
+    'DynamicDataQualityService',
+    'ProgressiveIntelligenceEngine',
     'IntelligenceOrchestrator',
     'RiskAssessmentService',
     'TrendAnalysisService',
@@ -64,11 +66,15 @@ __all__ = [
     # Service factory functions
     'get_intelligence_engine',
     'get_competitive_analysis_service',
-    'get_data_quality_service',
+    'create_personalized_data_quality_service',
+    'create_progressive_intelligence_system',
     'get_intelligence_orchestrator',
     'get_risk_assessment_service',
     'get_trend_analysis_service',
     'get_market_maturity_service',
+    
+    # Progressive Intelligence functions
+    'enhance_data_quality_with_intelligence',
     
     # Utility functions
     'get_all_intelligence_services',

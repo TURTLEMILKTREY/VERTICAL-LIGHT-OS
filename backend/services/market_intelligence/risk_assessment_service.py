@@ -14,6 +14,7 @@ import hashlib
 import statistics
 
 from config.config_manager import get_config_manager
+from .progressive_intelligence_framework import ProgressiveIntelligenceEngine
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +25,18 @@ class RiskAssessmentService:
     providing comprehensive risk analysis and mitigation strategies.
     """
     
-    def __init__(self):
+    def __init__(self, user_context: Optional[Dict[str, Any]] = None):
         self.config_manager = get_config_manager()
         self.risk_config = self._load_risk_configuration()
+        self.user_context = user_context or {}
+        
+        # Initialize Progressive Intelligence for personalized risk assessment
+        try:
+            self.progressive_intelligence = ProgressiveIntelligenceEngine(self.config_manager)
+            logger.info("Progressive Intelligence initialized for personalized risk assessment")
+        except Exception as e:
+            logger.warning(f"Progressive Intelligence initialization failed: {e}")
+            self.progressive_intelligence = None
         
         # Risk tracking and analysis
         self.risk_profiles: Dict[str, Dict[str, Any]] = {}
@@ -36,22 +46,96 @@ class RiskAssessmentService:
         # Thread safety
         self.lock = threading.RLock()
         
-        # Configuration-driven parameters
-        self.risk_tolerance_level = self._get_config_value('assessment.risk_tolerance_level', 'medium')
-        self.high_risk_threshold = self._get_config_value('thresholds.high_risk_score', 0.7)
-        self.medium_risk_threshold = self._get_config_value('thresholds.medium_risk_score', 0.4)
-        self.assessment_confidence_threshold = self._get_config_value('assessment.confidence_threshold', 0.75)
-        
-        # Risk categories and weights - 100% Dynamic from Configuration
-        self.risk_categories = self.config_manager.get('risk_categories', {
-            'market_risk': self.config_manager.get('risk_weights.market_risk_weight', 0.25),
-            'operational_risk': self.config_manager.get('risk_weights.operational_risk_weight', 0.20),
-            'financial_risk': self.config_manager.get('risk_weights.financial_risk_weight', 0.15),
-            'regulatory_risk': self.config_manager.get('risk_weights.regulatory_risk_weight', 0.15),
-            'competitive_risk': self.config_manager.get('risk_weights.competitive_risk_weight', 0.25)
-        })
+        # Enhanced configurability: Initialize personalized risk parameters with Progressive Intelligence
+        self._initialize_personalized_risk_parameters()
         
         logger.info("RiskAssessmentService initialized with dynamic configuration")
+
+    def _get_progressive_intelligence_context(self, context_type: str = "risk_assessment") -> Dict[str, Any]:
+        """Get Progressive Intelligence context for enhanced risk assessment
+        
+        Args:
+            context_type: Type of Progressive Intelligence context to retrieve
+            
+        Returns:
+            Progressive Intelligence context with personalized patterns
+        """
+        if not self.progressive_intelligence:
+            return {}
+            
+        try:
+            # Prepare context for Progressive Intelligence
+            context = {
+                'service_type': 'risk_assessment',
+                'analysis_type': context_type,
+                'industry': self.user_context.get('industry', 'general'),
+                'business_size': self.user_context.get('business_size', 'medium'),
+                'risk_tolerance': self.user_context.get('risk_tolerance', 'moderate')
+            }
+            
+            pi_suggestions = self.progressive_intelligence.get_intelligent_suggestions(context)
+            
+            logger.debug(f"Retrieved Progressive Intelligence suggestions for {context_type}")
+            return pi_suggestions
+            
+        except Exception as e:
+            logger.warning(f"Failed to get Progressive Intelligence suggestions: {e}")
+            return {}
+
+    def _initialize_personalized_risk_parameters(self):
+        """Initialize risk parameters with Progressive Intelligence enhanced configurability"""
+        
+        # Get Progressive Intelligence suggestions for risk parameters
+        pi_context = self._get_progressive_intelligence_context("risk_parameters")
+        
+        # Enhanced configurability: Risk tolerance level with PI suggestions
+        pi_risk_profile = pi_context.get('risk_profile', {})
+        suggested_tolerance = pi_risk_profile.get('suggested_tolerance', 'medium')
+        self.risk_tolerance_level = self._get_config_value(
+            'assessment.risk_tolerance_level', 
+            suggested_tolerance
+        )
+        
+        # Enhanced configurability: Risk thresholds with PI suggestions  
+        pi_thresholds = pi_context.get('quality_thresholds', {})
+        suggested_high_threshold = pi_thresholds.get('high_risk', None)
+        suggested_medium_threshold = pi_thresholds.get('medium_risk', None)
+        suggested_confidence_threshold = pi_thresholds.get('confidence_threshold', None)
+        
+        # Use PI suggestions as intelligent defaults, allow complete user override
+        self.high_risk_threshold = self._get_config_value(
+            'thresholds.high_risk_score', 
+            suggested_high_threshold
+        )
+        self.medium_risk_threshold = self._get_config_value(
+            'thresholds.medium_risk_score', 
+            suggested_medium_threshold  
+        )
+        self.assessment_confidence_threshold = self._get_config_value(
+            'assessment.confidence_threshold',
+            suggested_confidence_threshold
+        )
+        
+        # Enhanced configurability: Risk category weights with PI suggestions
+        pi_weights = pi_context.get('dimension_weights', {})
+        suggested_weights = pi_weights.get('risk_categories', {})
+        
+        # Build risk categories with PI-suggested intelligent defaults 
+        default_categories = {
+            'market_risk': suggested_weights.get('market_risk', None),
+            'operational_risk': suggested_weights.get('operational_risk', None), 
+            'financial_risk': suggested_weights.get('financial_risk', None),
+            'regulatory_risk': suggested_weights.get('regulatory_risk', None),
+            'competitive_risk': suggested_weights.get('competitive_risk', None)
+        }
+        
+        # Allow complete user override via configuration
+        self.risk_categories = {}
+        for category, pi_suggestion in default_categories.items():
+            config_key = f'risk_weights.{category}_weight'
+            self.risk_categories[category] = self.config_manager.get(config_key, pi_suggestion)
+            
+        logger.info("Initialized personalized risk parameters with Progressive Intelligence enhanced configurability")
         
     def _load_risk_configuration(self) -> Dict[str, Any]:
         """Load risk assessment configuration"""
@@ -281,7 +365,7 @@ class RiskAssessmentService:
     
     def _assess_risk_category(self, category: str, business_profile: Dict[str, Any], 
                             market_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Assess risk for a specific category"""
+        """Enhanced configurability: Assess risk for specific category with Progressive Intelligence"""
         try:
             assessment_method = getattr(self, f'_assess_{category}_risk', None)
             if assessment_method:
@@ -291,14 +375,63 @@ class RiskAssessmentService:
                 
         except Exception as e:
             logger.error(f"Error assessing {category} risk: {e}")
-            fallback_risk_score = self._get_config_value('fallback.risk_score', 0.5)
-            fallback_confidence = self._get_config_value('fallback.confidence', 0.3)
+            
+            # Enhanced configurability: Use Progressive Intelligence for intelligent fallbacks
+            return self._get_intelligent_risk_fallback(category, business_profile, market_data)
+
+    def _get_intelligent_risk_fallback(self, category: str, business_profile: Dict[str, Any], 
+                                     market_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Enhanced configurability: Generate intelligent fallback using Progressive Intelligence"""
+        
+        try:
+            # Get Progressive Intelligence context for fallback suggestions
+            pi_context = self._get_progressive_intelligence_context(f"risk_fallback_{category}")
+            
+            # Extract intelligent suggestions from Progressive Intelligence
+            pi_risk_profile = pi_context.get('risk_profile', {})
+            pi_thresholds = pi_context.get('quality_thresholds', {})
+            
+            # Use PI suggestions with complete user override capability
+            suggested_risk_score = pi_risk_profile.get('suggested_risk_score', None)
+            suggested_confidence = pi_risk_profile.get('suggested_confidence', None)
+            suggested_priority = pi_risk_profile.get('suggested_priority', 'medium')
+            
+            # Get user-configured values with PI suggestions as intelligent defaults
+            risk_score = self._get_config_value(
+                f'fallback.{category}_risk_score',
+                suggested_risk_score
+            )
+            confidence = self._get_config_value(
+                f'fallback.{category}_confidence', 
+                suggested_confidence
+            )
+            priority = self._get_config_value(
+                f'fallback.{category}_priority',
+                suggested_priority
+            )
+            
             return {
-                'risk_score': fallback_risk_score, 
-                'score': fallback_risk_score, 
-                'risk_factors': [], 
-                'confidence': fallback_confidence,
-                'mitigation_priority': 'medium'
+                'risk_score': risk_score,
+                'score': risk_score, 
+                'risk_factors': [f'Intelligent fallback for {category} risk assessment'],
+                'confidence': confidence,
+                'mitigation_priority': priority,
+                'pi_enhanced': True,
+                'fallback_reason': f'Progressive Intelligence enhanced fallback for {category}'
+            }
+            
+        except Exception as e:
+            logger.warning(f"Progressive Intelligence fallback failed for {category}: {e}")
+            
+            # Mathematical neutral fallback - no business assumptions
+            return {
+                'risk_score': 0.0,
+                'score': 0.0,
+                'risk_factors': [f'Neutral mathematical fallback for {category}'],
+                'confidence': 0.0,
+                'mitigation_priority': 'review_needed',
+                'pi_enhanced': False,
+                'fallback_reason': f'Neutral mathematical fallback - requires user configuration for {category}'
             }
     
     def _assess_market_risk(self, business_profile: Dict[str, Any], 
@@ -808,18 +941,13 @@ class RiskAssessmentService:
             return 0.0
     
     def _calculate_overall_risk_score(self, category_assessments: Dict[str, Any]) -> float:
-        """Calculate overall risk score from category assessments"""
+        """Enhanced configurability: Calculate overall risk score using Progressive Intelligence"""
         try:
-            # Use configured risk weights from config
-            raw_weights = {
-                'market_risk': self.config_manager.get('risk_weights.market_risk_weight', 0.3),
-                'operational_risk': self.config_manager.get('risk_weights.operational_risk_weight', 0.25),
-                'financial_risk': self.config_manager.get('risk_weights.financial_risk_weight', 0.2),
-                'regulatory_risk': self.config_manager.get('risk_weights.regulatory_risk_weight', 0.15),
-                'competitive_risk': self.config_manager.get('risk_weights.competitive_risk_weight', 0.1)
-            }
+            # Enhanced configurability: Use risk weights from Progressive Intelligence initialization
+            # These were already personalized in _initialize_personalized_risk_parameters()
+            raw_weights = self.risk_categories
             
-            # Return exact weighted calculation as test expects (no normalization)
+            # Progressive Intelligence enhanced calculation
             weighted_score = 0.0
             
             for category, weight in raw_weights.items():
@@ -830,13 +958,24 @@ class RiskAssessmentService:
                         score = assessment.get('risk_score', 0)
                     else:
                         score = float(assessment) if assessment is not None else 0
-                    weighted_score += score * weight
+                    
+                    # Apply user-personalized weight
+                    weighted_score += score * (weight if weight is not None else 0)
             
             return weighted_score
             
         except Exception as e:
             logger.error(f"Error calculating overall risk score: {e}")
-            return self.config_manager.get('fallback.overall_risk_score', 0.5)
+            
+            # Enhanced configurability: Get intelligent fallback from Progressive Intelligence
+            pi_context = self._get_progressive_intelligence_context("overall_risk_fallback")
+            pi_fallback = pi_context.get('risk_profile', {}).get('suggested_overall_score', None)
+            
+            # Use PI suggestion with user override capability
+            fallback_score = self.config_manager.get('fallback.overall_risk_score', pi_fallback)
+            
+            # Mathematical neutral fallback if no user config or PI suggestion
+            return fallback_score if fallback_score is not None else 0.0
     
     def _determine_risk_level(self, risk_score: float) -> str:
         """Determine risk level based on score"""
@@ -1574,59 +1713,156 @@ class RiskAssessmentService:
             return self.config_manager.get('confidence.error_fallback', 0.5)
     
     def _generate_mitigation_recommendations(self, risk_factors: List[Dict[str, Any]]) -> List[str]:
-        """Generate mitigation recommendations - 100% Dynamic"""
+        """Enhanced configurability: Generate personalized mitigation recommendations with Progressive Intelligence"""
         try:
             recommendations = []
             
-            # Dynamic recommendation templates from config
-            templates = self._get_config_value('mitigation.recommendation_templates', {
+            # Enhanced configurability: Get Progressive Intelligence suggestions for mitigation strategies
+            pi_context = self._get_progressive_intelligence_context("mitigation_recommendations")
+            pi_industry_profile = pi_context.get('industry_profile', {})
+            pi_suggested_templates = pi_industry_profile.get('suggested_mitigation_templates', None)
+            
+            # Use PI suggestions as intelligent defaults with complete user override
+            default_templates = {
                 'high': ['Immediate action required for {factor}', 'Implement contingency plan for {category}'],
                 'medium': ['Monitor {factor} closely', 'Consider preventive measures for {category}'],
                 'low': ['Regular review of {factor}', 'Maintain awareness of {category}']
-            })
+            }
+            
+            templates = self._get_config_value(
+                'mitigation.recommendation_templates', 
+                pi_suggested_templates or default_templates
+            )
             
             for factor in risk_factors:
                 severity = factor.get('severity_level', 'medium')
                 category = factor.get('category', 'general')
                 factor_name = factor.get('factor', 'unknown')
                 
-                template_list = templates.get(severity, templates.get('medium', []))
-                if template_list:
-                    template = template_list[hash(factor_name) % len(template_list)]
-                    recommendation = template.format(factor=factor_name, category=category)
-                    recommendations.append(recommendation)
+                # Enhanced configurability: Get personalized mitigation approach
+                personalized_recommendations = self._get_personalized_mitigation_recommendations(
+                    factor, severity, category, pi_context
+                )
+                
+                if personalized_recommendations:
+                    recommendations.extend(personalized_recommendations)
+                else:
+                    # Fallback to template-based approach
+                    template_list = templates.get(severity, templates.get('medium', []))
+                    if template_list:
+                        template = template_list[hash(factor_name) % len(template_list)]
+                        recommendation = template.format(factor=factor_name, category=category)
+                        recommendations.append(recommendation)
             
-            # Add default recommendations if none generated
+            # Enhanced configurability: Get PI suggestions for default recommendations  
             if not recommendations:
-                recommendations = ['Manual risk review required']
+                pi_defaults = pi_context.get('alternatives', {}).get('default_recommendations', None)
+                default_rec = pi_defaults or ['Manual risk review required - configure personalized mitigation strategies']
+                recommendations = default_rec
             
             return recommendations
             
         except Exception as e:
             logger.warning(f"Error generating mitigation recommendations: {e}")
-            return ['Manual risk review required']
+            return ['Manual risk review required - Progressive Intelligence mitigation enhancement failed']
+
+    def _get_personalized_mitigation_recommendations(self, factor: Dict[str, Any], 
+                                                   severity: str, category: str, 
+                                                   pi_context: Dict[str, Any]) -> List[str]:
+        """Enhanced configurability: Generate personalized mitigation recommendations using Progressive Intelligence"""
+        
+        try:
+            recommendations = []
+            
+            # Extract Progressive Intelligence suggestions for personalized mitigation
+            pi_industry = pi_context.get('industry_profile', {})
+            pi_size_adjustments = pi_context.get('size_adjustments', {})
+            pi_risk_profile = pi_context.get('risk_profile', {})
+            
+            # Get industry-specific mitigation patterns
+            industry_patterns = pi_industry.get('suggested_mitigation_patterns', {})
+            if category in industry_patterns:
+                pattern_recommendations = industry_patterns[category].get(severity, [])
+                recommendations.extend(pattern_recommendations)
+            
+            # Get business size-specific mitigation approaches
+            size_specific = pi_size_adjustments.get('focus_areas', [])
+            if 'mitigation' in size_specific:
+                size_recommendations = pi_size_adjustments.get('mitigation_approaches', {}).get(severity, [])
+                recommendations.extend(size_recommendations)
+            
+            # Get risk tolerance-specific mitigation strategies
+            risk_tolerance_strategies = pi_risk_profile.get('mitigation_strategies', {})
+            if severity in risk_tolerance_strategies:
+                tolerance_recommendations = risk_tolerance_strategies[severity]
+                if isinstance(tolerance_recommendations, list):
+                    recommendations.extend(tolerance_recommendations)
+            
+            # Apply user-configured personalization overrides
+            personalization_key = f'mitigation.{category}.{severity}_recommendations'
+            user_overrides = self._get_config_value(personalization_key, [])
+            if user_overrides:
+                recommendations = user_overrides  # Complete user override
+            
+            return recommendations
+            
+        except Exception as e:
+            logger.warning(f"Error generating personalized mitigation recommendations: {e}")
+            return []
     
     def _calculate_volatility_metrics(self, risk_trends: Dict[str, Any]) -> Dict[str, Any]:
-        """Calculate volatility metrics - 100% Dynamic"""
+        """Enhanced configurability: Calculate volatility metrics with Progressive Intelligence"""
         try:
             metrics = {}
             
+            # Get Progressive Intelligence suggestions for volatility thresholds
+            pi_context = self._get_progressive_intelligence_context("volatility_metrics")
+            pi_thresholds = pi_context.get('quality_thresholds', {})
+            
+            # Use PI suggestions with user override capability
+            default_volatility = self._get_config_value(
+                'volatility.default_value', 
+                pi_thresholds.get('default_volatility', None)
+            )
+            default_trend_strength = self._get_config_value(
+                'volatility.default_trend_strength',
+                pi_thresholds.get('default_trend_strength', None)
+            )
+            high_volatility_threshold = self._get_config_value(
+                'volatility.high_threshold',
+                pi_thresholds.get('high_volatility_threshold', None)
+            )  
+            low_volatility_threshold = self._get_config_value(
+                'volatility.low_threshold',
+                pi_thresholds.get('low_volatility_threshold', None)
+            )
+            
             for category, trend_data in risk_trends.items():
                 if isinstance(trend_data, dict):
-                    volatility = trend_data.get('volatility', 0.5)
+                    volatility = trend_data.get('volatility', default_volatility)
                     metrics[category] = {
                         'volatility': volatility,
-                        'stability': 1.0 - volatility,
-                        'trend_strength': trend_data.get('trend_strength', 0.5)
+                        'stability': 1.0 - (volatility or 0.0),
+                        'trend_strength': trend_data.get('trend_strength', default_trend_strength)
                     }
             
-            # Calculate overall metrics
+            # Calculate overall metrics with user-configured thresholds
             if metrics:
-                avg_volatility = sum(m['volatility'] for m in metrics.values()) / len(metrics)
+                valid_volatilities = [m['volatility'] for m in metrics.values() if m['volatility'] is not None]
+                avg_volatility = sum(valid_volatilities) / len(valid_volatilities) if valid_volatilities else 0.0
+                
                 metrics['overall'] = {
                     'average_volatility': avg_volatility,
-                    'high_volatility_categories': [cat for cat, m in metrics.items() if m.get('volatility', 0) > 0.7],
-                    'stable_categories': [cat for cat, m in metrics.items() if m.get('volatility', 0) < 0.3]
+                    'high_volatility_categories': [
+                        cat for cat, m in metrics.items() 
+                        if m.get('volatility') is not None and high_volatility_threshold is not None 
+                        and m.get('volatility', 0) > high_volatility_threshold
+                    ],
+                    'stable_categories': [
+                        cat for cat, m in metrics.items()
+                        if m.get('volatility') is not None and low_volatility_threshold is not None
+                        and m.get('volatility', 0) < low_volatility_threshold
+                    ]
                 }
             
             return metrics
@@ -1663,23 +1899,49 @@ class RiskAssessmentService:
             return {'category': category, 'trend_value': fallback_trend_value, 'volatility': fallback_volatility, 'trend_strength': fallback_trend_strength}
     
     def _identify_emerging_risks(self, risk_trends: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Identify emerging risks - 100% Dynamic"""
+        """Enhanced configurability: Identify emerging risks with Progressive Intelligence"""
         try:
             emerging_risks = []
-            threshold = self._get_config_value('monitoring.emerging_risk_threshold', 0.6)
+            
+            # Get Progressive Intelligence suggestions for emerging risk detection
+            pi_context = self._get_progressive_intelligence_context("emerging_risk_detection")
+            pi_thresholds = pi_context.get('quality_thresholds', {})
+            
+            # Use PI suggestions with user override capability
+            threshold = self._get_config_value(
+                'monitoring.emerging_risk_threshold', 
+                pi_thresholds.get('emerging_risk_threshold', None)
+            )
+            default_trend_value = self._get_config_value(
+                'trends.default_trend_value',
+                pi_thresholds.get('default_trend_value', None)
+            )
+            default_volatility = self._get_config_value(
+                'trends.default_volatility',
+                pi_thresholds.get('default_volatility', None)
+            )
+            volatility_threshold = self._get_config_value(
+                'trends.volatility_threshold',
+                pi_thresholds.get('volatility_threshold', None)
+            )
+            default_confidence = self._get_config_value(
+                'trends.default_confidence',
+                pi_thresholds.get('default_confidence', None)
+            )
             
             for category, trend_data in risk_trends.items():
                 if isinstance(trend_data, dict):
-                    trend_value = trend_data.get('trend_value', 0.5)
-                    volatility = trend_data.get('volatility', 0.3)
+                    trend_value = trend_data.get('trend_value', default_trend_value)
+                    volatility = trend_data.get('volatility', default_volatility)
                     
-                    # Consider as emerging if trending upward and volatile
-                    if trend_value > threshold and volatility > 0.4:
+                    # Enhanced configurability: User-defined emerging risk criteria
+                    if (threshold is not None and trend_value is not None and trend_value > threshold and 
+                        volatility_threshold is not None and volatility is not None and volatility > volatility_threshold):
                         emerging_risks.append({
                             'category': category,
                             'risk_score': trend_value,
                             'volatility': volatility,
-                            'emergence_confidence': trend_data.get('confidence', 0.5)
+                            'emergence_confidence': trend_data.get('confidence', default_confidence)
                         })
             
             return emerging_risks
@@ -1689,23 +1951,49 @@ class RiskAssessmentService:
             return []
     
     def _identify_declining_risks(self, risk_trends: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Identify declining risks - 100% Dynamic"""
+        """Enhanced configurability: Identify declining risks with Progressive Intelligence"""
         try:
             declining_risks = []
-            threshold = self._get_config_value('monitoring.declining_risk_threshold', 0.4)
+            
+            # Get Progressive Intelligence suggestions for declining risk detection  
+            pi_context = self._get_progressive_intelligence_context("declining_risk_detection")
+            pi_thresholds = pi_context.get('quality_thresholds', {})
+            
+            # Use PI suggestions with user override capability
+            threshold = self._get_config_value(
+                'monitoring.declining_risk_threshold', 
+                pi_thresholds.get('declining_risk_threshold', None)
+            )
+            default_trend_value = self._get_config_value(
+                'trends.default_trend_value',
+                pi_thresholds.get('default_trend_value', None)
+            )
+            default_volatility = self._get_config_value(
+                'trends.default_volatility', 
+                pi_thresholds.get('default_volatility', None)
+            )
+            max_volatility_threshold = self._get_config_value(
+                'trends.max_volatility_threshold',
+                pi_thresholds.get('max_volatility_threshold', None)
+            )
+            default_confidence = self._get_config_value(
+                'trends.default_confidence',
+                pi_thresholds.get('default_confidence', None)
+            )
             
             for category, trend_data in risk_trends.items():
                 if isinstance(trend_data, dict):
-                    trend_value = trend_data.get('trend_value', 0.5)
-                    volatility = trend_data.get('volatility', 0.3)
+                    trend_value = trend_data.get('trend_value', default_trend_value)
+                    volatility = trend_data.get('volatility', default_volatility)
                     
-                    # Consider as declining if trending downward with low volatility
-                    if trend_value < threshold and volatility < 0.3:
+                    # Enhanced configurability: User-defined declining risk criteria
+                    if (threshold is not None and trend_value is not None and trend_value < threshold and
+                        max_volatility_threshold is not None and volatility is not None and volatility < max_volatility_threshold):
                         declining_risks.append({
                             'category': category,
                             'risk_score': trend_value,
                             'volatility': volatility,
-                            'decline_confidence': trend_data.get('confidence', 0.5)
+                            'decline_confidence': trend_data.get('confidence', default_confidence)
                         })
             
             return declining_risks

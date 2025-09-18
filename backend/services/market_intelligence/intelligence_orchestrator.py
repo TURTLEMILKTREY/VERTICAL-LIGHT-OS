@@ -16,7 +16,8 @@ import hashlib
 from config.config_manager import get_config_manager
 from .intelligence_engine import get_intelligence_engine
 from .competitive_analysis_service import get_competitive_analysis_service
-from .data_quality_service import get_data_quality_service
+from .data_quality_service_dynamic import DynamicDataQualityService, create_personalized_data_quality_service
+from .progressive_intelligence_framework import ProgressiveIntelligenceEngine, enhance_data_quality_with_intelligence
 
 logger = logging.getLogger(__name__)
 
@@ -31,12 +32,18 @@ class IntelligenceOrchestrator:
         self.config_manager = get_config_manager()
         self.orchestrator_config = self._load_orchestrator_configuration()
         
-        # Service registry
+        # Service registry with Progressive Intelligence enhancement
         self.services = {
             'intelligence_engine': get_intelligence_engine(),
             'competitive_analysis': get_competitive_analysis_service(),
-            'data_quality': get_data_quality_service()
+            'data_quality': create_personalized_data_quality_service()
         }
+        
+        # Initialize Progressive Intelligence Engine
+        self.progressive_intelligence = ProgressiveIntelligenceEngine(self.config_manager)
+        
+        # Enhanced data quality service with Progressive Intelligence
+        self.enhanced_data_quality_enabled = self._get_config_value('progressive_intelligence.enabled', True)
         
         # Workflow management
         self.active_workflows: Dict[str, Dict[str, Any]] = {}
@@ -138,11 +145,36 @@ class IntelligenceOrchestrator:
                 self.active_workflows[workflow_id] = workflow_result
                 
                 try:
-                    # Step 1: Data Quality Validation
-                    logger.info(f"[{workflow_id}] Starting data quality validation")
-                    data_quality_result = self.services['data_quality'].validate_market_data(
-                        market_data, 'comprehensive_market_data'
-                    )
+                    # Step 1: Enhanced Data Quality Validation with Progressive Intelligence
+                    logger.info(f"[{workflow_id}] Starting enhanced data quality validation")
+                    
+                    if self.enhanced_data_quality_enabled:
+                        # Use Progressive Intelligence enhanced data quality
+                        personalization_context = {
+                            'industry': business_profile.get('industry', 'general'),
+                            'business_size': business_profile.get('business_size', 'medium'),
+                            'risk_tolerance': business_profile.get('risk_tolerance', 'moderate'),
+                            'regulatory_environment': business_profile.get('regulatory_environment', 'standard')
+                        }
+                        
+                        # Create dynamic data quality service with Progressive Intelligence
+                        dynamic_data_quality = DynamicDataQualityService(personalization_context)
+                        data_quality_result = dynamic_data_quality.assess_data_quality(market_data, {
+                            'analysis_type': 'comprehensive_market_data',
+                            'workflow_id': workflow_id
+                        })
+                        
+                        # Enhance with intelligent suggestions
+                        enhanced_context = enhance_data_quality_with_intelligence(dynamic_data_quality, personalization_context)
+                        data_quality_result['progressive_intelligence'] = enhanced_context.get('intelligent_suggestions', {})
+                        
+                        logger.info(f"[{workflow_id}] Applied Progressive Intelligence enhancement")
+                    else:
+                        # Fallback to original data quality service
+                        data_quality_result = self.services['data_quality'].validate_market_data(
+                            market_data, 'comprehensive_market_data'
+                        )
+                    
                     workflow_result['results']['data_quality'] = data_quality_result
                     
                     # Check if data quality is sufficient

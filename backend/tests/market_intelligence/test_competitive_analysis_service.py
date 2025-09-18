@@ -27,28 +27,75 @@ class TestCompetitiveAnalysisService(unittest.TestCase):
         """Set up test environment with dynamic configuration"""
         self.config_manager = Mock(spec=ConfigurationManager)
         
-        # Dynamic test configuration - all values configurable
+        # Business-neutral test configuration - NO BUSINESS ASSUMPTIONS
         self.test_config = {
+            'competitive_analysis': {
+                'analysis': {
+                    'safe_fallback_industry': 'test_industry',
+                    'unknown_industry_fallback': 'test_industry'
+                },
+                'market': {
+                    'significant_share_threshold': 0.0  # No business assumption about significance
+                },
+                'intensity_analysis': {
+                    'factor_weights': {
+                        'market_share': 1.0,  # Equal weights - no bias
+                        'price_competition': 1.0,
+                        'innovation_rate': 1.0,
+                        'marketing_intensity': 1.0
+                    }
+                },
+                'competitive_intensity': {
+                    'no_competitors_level': 'neutral',
+                    'no_competitors_score': 0.0,
+                    'error_fallback_level': 'neutral',
+                    'fallback_level': 'neutral',
+                    'high_threshold': 1.0,  # Never trigger unless truly configured
+                    'medium_threshold': 0.5
+                },
+                'status_codes': {
+                    'error_status': 'error',
+                    'success_status': 'success'
+                },
+                'clustering': {
+                    'large_player_threshold': 0.0  # No assumption about "large"
+                },
+                'market_segments': {
+                    'all_segments_list': ['segment_a', 'segment_b', 'segment_c', 'segment_d']
+                },
+                'strategic_groups': {
+                    'large_threshold': 0.0  # No business assumption
+                },
+                'portfolio': {
+                    'broad_threshold': 1  # Minimal threshold
+                },
+                'portfolio_categorization': {
+                    'error_fallback': 'neutral'
+                },
+                'marketing': {
+                    'unknown_spend_level_fallback': 'neutral'
+                }
+            },
             'market_structure': {
-                'hhi_multiplier': random.uniform(1.0, 2.0),
-                'concentration_threshold': random.uniform(0.5, 0.9),
-                'fragmented_threshold': random.uniform(0.1, 0.4)
+                'hhi_multiplier': 1.0,  # No mathematical bias
+                'concentration_threshold': 1.0,  # Never trigger unless configured
+                'fragmented_threshold': 0.0
             },
             'competitive_intensity': {
-                'high_threshold': random.uniform(0.7, 0.9),
-                'medium_threshold': random.uniform(0.4, 0.6),
-                'price_competition_weight': random.uniform(0.1, 0.5),
-                'innovation_weight': random.uniform(0.1, 0.5)
+                'high_threshold': 1.0,  # Never trigger unless truly configured
+                'medium_threshold': 0.5,
+                'price_competition_weight': 1.0,  # Equal weights - no bias
+                'innovation_weight': 1.0
             },
             'monitoring': {
-                'update_frequency_hours': random.randint(12, 72),
-                'significant_change_threshold': random.uniform(0.1, 0.3)
+                'update_frequency_hours': 24,  # Neutral daily cycle
+                'significant_change_threshold': 0.0  # No assumption about significance
             },
             'analysis_weights': {
-                'market_share_weight': random.uniform(0.2, 0.5),
-                'growth_rate_weight': random.uniform(0.1, 0.4),
-                'innovation_weight': random.uniform(0.1, 0.3),
-                'pricing_weight': random.uniform(0.1, 0.3)
+                'market_share_weight': 1.0,  # Equal weights - no business bias
+                'growth_rate_weight': 1.0,
+                'innovation_weight': 1.0,
+                'pricing_weight': 1.0
             }
         }
         
@@ -71,35 +118,27 @@ class TestCompetitiveAnalysisService(unittest.TestCase):
             return default
     
     def _generate_dynamic_competitor_data(self, num_competitors: int = None) -> List[Dict[str, Any]]:
-        """Generate dynamic competitor data for testing"""
+        """Generate business-neutral competitor data for testing - NO BUSINESS ASSUMPTIONS"""
         if num_competitors is None:
             num_competitors = random.randint(2, 10)
         
         competitors = []
-        total_market_share = 0
         
         for i in range(num_competitors):
-            market_share = random.uniform(0.05, 0.4)
-            total_market_share += market_share
-            
+            # Use mathematically distributed values without business meaning
             competitor = {
-                'competitor_id': f'competitor_{i}_{uuid.uuid4().hex[:8]}',
-                'name': f'Company_{i}',
-                'market_share': market_share,
-                'revenue': random.uniform(1000000, 100000000),
-                'growth_rate': random.uniform(-0.1, 0.5),
-                'pricing_strategy': random.choice(['premium', 'competitive', 'discount']),
-                'innovation_score': random.uniform(0.1, 1.0),
-                'customer_satisfaction': random.uniform(0.5, 1.0),
-                'geographical_presence': random.randint(1, 50),
-                'product_portfolio_size': random.randint(1, 100)
+                'competitor_id': f'test_competitor_{i}_{uuid.uuid4().hex[:8]}',
+                'name': f'Test_Entity_{i}',
+                'market_share': random.uniform(0.01, 1.0),  # Any mathematical range
+                'revenue': random.uniform(100, 1000000),   # Any scale - no business meaning
+                'growth_rate': random.uniform(-1.0, 1.0),  # Any growth direction
+                'pricing_strategy': f'strategy_{random.randint(1, 5)}',  # Neutral labels
+                'innovation_score': random.uniform(0.0, 1.0),  # Full mathematical range
+                'customer_satisfaction': random.uniform(0.0, 1.0),  # Full range
+                'geographical_presence': random.randint(1, 100),  # Any count
+                'product_portfolio_size': random.randint(1, 1000)  # Any size
             }
             competitors.append(competitor)
-        
-        # Normalize market shares to sum to reasonable total
-        normalization_factor = min(0.95, 1.0 / total_market_share)
-        for competitor in competitors:
-            competitor['market_share'] *= normalization_factor
         
         return competitors
     
@@ -325,18 +364,18 @@ class TestCompetitiveAnalysisService(unittest.TestCase):
     
     def test_market_share_validation_dynamic(self):
         """Test market share validation with dynamic data"""
-        # Generate competitors with various market share scenarios
+        # Generate mathematically diverse scenarios - NO BUSINESS ASSUMPTIONS
         test_scenarios = [
-            # Normal scenario
+            # Scenario A: Random distribution
             self._generate_dynamic_competitor_data(5),
-            # High concentration scenario
+            # Scenario B: Mathematical concentration (no "dominance" assumption)
             [
-                {'competitor_id': 'dominant', 'market_share': 0.7, 'revenue': 50000000},
-                {'competitor_id': 'small1', 'market_share': 0.15, 'revenue': 10000000},
-                {'competitor_id': 'small2', 'market_share': 0.15, 'revenue': 8000000}
+                {'competitor_id': 'entity_a', 'market_share': 0.8, 'revenue': 1000},
+                {'competitor_id': 'entity_b', 'market_share': 0.1, 'revenue': 500},
+                {'competitor_id': 'entity_c', 'market_share': 0.1, 'revenue': 300}
             ],
-            # Fragmented scenario
-            [{'competitor_id': f'frag_{i}', 'market_share': 0.05, 'revenue': 1000000} 
+            # Scenario C: Mathematical distribution (no "fragmentation" assumption) 
+            [{'competitor_id': f'entity_{i}', 'market_share': 0.01, 'revenue': 100} 
              for i in range(20)]
         ]
         
@@ -361,36 +400,36 @@ class TestCompetitiveAnalysisServiceIntegration(unittest.TestCase):
     
     def test_real_configuration_integration(self):
         """Test with real configuration files"""
-        # Generate realistic competitor data
+        # Generate configuration-neutral test data - NO BUSINESS ASSUMPTIONS
         competitors = [
             {
-                'competitor_id': 'comp_1',
-                'name': 'Leader Corp',
-                'market_share': 0.35,
-                'revenue': 75000000,
-                'growth_rate': 0.12
+                'competitor_id': 'test_entity_1',
+                'name': 'Test Entity 1',
+                'market_share': 0.4,
+                'revenue': 1000,
+                'growth_rate': 0.1
             },
             {
-                'competitor_id': 'comp_2',
-                'name': 'Challenger Inc',
-                'market_share': 0.25,
-                'revenue': 50000000,
-                'growth_rate': 0.18
+                'competitor_id': 'test_entity_2', 
+                'name': 'Test Entity 2',
+                'market_share': 0.3,
+                'revenue': 800,
+                'growth_rate': 0.2
             },
             {
-                'competitor_id': 'comp_3',
-                'name': 'Follower Ltd',
-                'market_share': 0.15,
-                'revenue': 25000000,
-                'growth_rate': 0.08
+                'competitor_id': 'test_entity_3',
+                'name': 'Test Entity 3',
+                'market_share': 0.2,
+                'revenue': 600,
+                'growth_rate': 0.05
             }
         ]
         
         market_data = {
-            'market_id': 'test_market',
-            'total_market_size': 200000000,
-            'growth_rate': 0.15,
-            'maturity_level': 'growing'
+            'market_id': 'test_scenario',
+            'total_market_size': 10000,
+            'growth_rate': 0.1,
+            'maturity_level': 'test_stage'
         }
         
         # Test competitive analysis

@@ -1,0 +1,190 @@
+{
+    "progressive_intelligence": {
+        "enabled": true,
+        "description": "Progressive Intelligence Framework - Revolutionary + Practical Data Quality Personalization",
+        "version": "1.0.0",
+        
+        "framework_settings": {
+            "four_tier_intelligence": true,
+            "user_override_capability": true,
+            "learning_enabled": true,
+            "context_aware_suggestions": true,
+            "zero_hardcoded_assumptions": true
+        },
+        
+        "intelligence_tiers": {
+            "user_defined": {
+                "priority": 1,
+                "description": "User-defined configurations take highest priority"
+            },
+            "learned_patterns": {
+                "priority": 2,
+                "description": "AI-learned patterns from similar successful businesses",
+                "minimum_confidence": 0.7,
+                "minimum_sample_size": 5
+            },
+            "intelligent_defaults": {
+                "priority": 3,
+                "description": "Context-aware smart suggestions",
+                "enabled": true
+            },
+            "business_neutral": {
+                "priority": 4,
+                "description": "Business-neutral fallback that makes no assumptions",
+                "enabled": true
+            }
+        },
+        
+        "suggestion_confidence": {
+            "high_confidence_threshold": 0.8,
+            "medium_confidence_threshold": 0.6,
+            "low_confidence_threshold": 0.4,
+            "explanation_required": true
+        },
+        
+        "learning_engine": {
+            "enabled": true,
+            "privacy_compliant": true,
+            "feedback_collection": true,
+            "pattern_recognition": true,
+            "continuous_improvement": true
+        },
+        
+        "user_experience": {
+            "progressive_disclosure": true,
+            "rationale_explanations": true,
+            "alternative_suggestions": true,
+            "modification_allowed": true,
+            "complete_override": true
+        }
+    },
+    
+    "data_quality_personalization": {
+        "revolutionary_features": {
+            "user_industry_profiles": {},
+            "user_business_size_profiles": {},
+            "user_risk_profiles": {},
+            "user_regulatory_profiles": {},
+            "custom_dimensions": {},
+            "dimension_weights": {}
+        },
+        
+        "suggested_industry_profiles": {
+            "healthcare": {
+                "accuracy": {"weight": 0.32, "threshold": 0.95},
+                "validity": {"weight": 0.28, "threshold": 0.97},
+                "completeness": {"weight": 0.25, "threshold": 0.90},
+                "consistency": {"weight": 0.15, "threshold": 0.88},
+                "rationale": "Healthcare data requires maximum accuracy and validity for patient safety"
+            },
+            "finance": {
+                "accuracy": {"weight": 0.30, "threshold": 0.95},
+                "consistency": {"weight": 0.25, "threshold": 0.92},
+                "validity": {"weight": 0.22, "threshold": 0.94},
+                "completeness": {"weight": 0.18, "threshold": 0.88},
+                "timeliness": {"weight": 0.05, "threshold": 0.85},
+                "rationale": "Financial data demands accuracy, consistency, and regulatory compliance"
+            },
+            "retail": {
+                "completeness": {"weight": 0.30, "threshold": 0.85},
+                "accuracy": {"weight": 0.25, "threshold": 0.88},
+                "timeliness": {"weight": 0.25, "threshold": 0.82},
+                "consistency": {"weight": 0.20, "threshold": 0.80},
+                "rationale": "Retail prioritizes complete, accurate, and timely customer and inventory data"
+            },
+            "manufacturing": {
+                "accuracy": {"weight": 0.28, "threshold": 0.92},
+                "consistency": {"weight": 0.25, "threshold": 0.90},
+                "completeness": {"weight": 0.22, "threshold": 0.88},
+                "validity": {"weight": 0.20, "threshold": 0.85},
+                "timeliness": {"weight": 0.05, "threshold": 0.80},
+                "rationale": "Manufacturing requires precise, consistent data for operations and supply chain"
+            }
+        },
+        
+        "suggested_regulatory_profiles": {
+            "GDPR": {
+                "multiplier": 1.06,
+                "focus_dimensions": ["accuracy", "completeness", "consistency"],
+                "focus_emphasis": 1.05,
+                "rationale": "GDPR requires data accuracy and completeness for individual rights"
+            },
+            "HIPAA": {
+                "multiplier": 1.08,
+                "focus_dimensions": ["accuracy", "validity", "consistency"],
+                "focus_emphasis": 1.07,
+                "rationale": "HIPAA mandates strict healthcare data integrity and security"
+            },
+            "SOX": {
+                "multiplier": 1.07,
+                "focus_dimensions": ["accuracy", "completeness", "validity"],
+                "focus_emphasis": 1.06,
+                "rationale": "SOX requires financial data accuracy and auditability"
+            },
+            "PCI": {
+                "multiplier": 1.04,
+                "focus_dimensions": ["validity", "accuracy", "consistency"],
+                "focus_emphasis": 1.03,
+                "rationale": "PCI focuses on payment data security and validation"
+            }
+        },
+        
+        "weight_personalization_modes": {
+            "proportional": {
+                "description": "Normalize all weights to sum to 1.0 (default)",
+                "recommended_for": "Most users"
+            },
+            "strict": {
+                "description": "Preserve user weights exactly, adjust others proportionally",
+                "recommended_for": "Users with specific weight requirements"
+            },
+            "additive": {
+                "description": "Add user weights while maintaining proportional distribution",
+                "recommended_for": "Users adding custom dimensions"
+            },
+            "override": {
+                "description": "Complete user control, can break mathematical rules",
+                "recommended_for": "Advanced users with specific needs"
+            }
+        }
+    },
+    
+    "intelligence_orchestrator": {
+        "progressive_intelligence": {
+            "enabled": true,
+            "integration_mode": "enhanced",
+            "fallback_enabled": true
+        },
+        
+        "workflows": {
+            "comprehensive_analysis_timeout": 20,
+            "competitor_monitoring_timeout": 12,
+            "progressive_intelligence_timeout": 15
+        },
+        
+        "orchestration": {
+            "max_concurrent_workflows": 15,
+            "workflow_timeout_minutes": 35,
+            "enable_parallel_processing": true,
+            "progressive_intelligence_parallel": true
+        },
+        
+        "health": {
+            "check_interval_minutes": 3,
+            "progressive_intelligence_monitoring": true
+        },
+        
+        "quality": {
+            "minimum_score": 0.65,
+            "progressive_intelligence_boost": 0.05
+        }
+    },
+    
+    "competitive_advantages": {
+        "revolutionary_personalization": "No competitor offers this level of customization",
+        "practical_intelligence": "Smart defaults enable immediate value delivery",
+        "learning_network_effects": "System improves for everyone through usage",
+        "complete_user_control": "Users never hit customization limitations",
+        "zero_assumptions": "Business-neutral approach respects user expertise"
+    }
+}

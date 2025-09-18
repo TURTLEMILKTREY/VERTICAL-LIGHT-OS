@@ -22,6 +22,13 @@ from config.config_manager import get_config_manager
 
 logger = logging.getLogger(__name__)
 
+# Import Progressive Intelligence Framework
+try:
+    from .progressive_intelligence_framework import ProgressiveIntelligenceEngine
+except ImportError:
+    logger.warning("Progressive Intelligence Framework not available")
+    ProgressiveIntelligenceEngine = None
+
 # Import existing microservices for orchestration
 try:
     from .risk_assessment_service import RiskAssessmentService
@@ -44,9 +51,14 @@ class MarketIntelligenceEngine:
     adaptive learning, and predictive analytics capabilities.
     """
     
-    def __init__(self):
+    def __init__(self, user_context: Optional[Dict[str, Any]] = None):
         self.config_manager = get_config_manager()
         self.intelligence_config = self._load_intelligence_configuration()
+        self.user_context = user_context or {}
+        
+        # Initialize Progressive Intelligence for personalized market intelligence
+        user_id = self.user_context.get('user_id', 'anonymous')
+        self.progressive_intelligence = ProgressiveIntelligenceEngine(user_id) if ProgressiveIntelligenceEngine else None
         
         # Initialize orchestrated microservices
         self.risk_service = RiskAssessmentService() if RiskAssessmentService else None
@@ -98,11 +110,12 @@ class MarketIntelligenceEngine:
     def analyze_market_context(self, business_profile: Dict[str, Any], 
                              market_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Analyze market context and generate intelligence insights
+        Analyze market context and generate PERSONALIZED intelligence insights
+        Uses Progressive Intelligence to adapt to user's business goals and preferences
         """
         with self.lock:
             try:
-                # Create unique context signature
+                # Create unique context signature  
                 context_signature = self._create_context_signature(business_profile, market_data)
                 
                 # Check cache first
@@ -110,16 +123,20 @@ class MarketIntelligenceEngine:
                 if cached_insight:
                     return cached_insight
                 
-                # Generate comprehensive market intelligence
+                # Get Progressive Intelligence personalized analysis patterns
+                personalized_context = self._get_progressive_intelligence_context(business_profile, market_data)
+                
+                # Generate PERSONALIZED market intelligence using user's business context
                 intelligence = {
                     'context_id': context_signature,
                     'timestamp': datetime.now().isoformat(),
-                    'market_opportunities': self._identify_market_opportunities(business_profile, market_data),
-                    'competitive_landscape': self._analyze_competitive_landscape(business_profile, market_data),
-                    'risk_assessment': self._assess_market_risks(business_profile, market_data),
-                    'trend_analysis': self._analyze_market_trends(market_data),
-                    'recommendations': self._generate_strategic_recommendations(business_profile, market_data),
-                    'confidence_score': self._calculate_confidence_score(business_profile, market_data)
+                    'personalization_applied': personalized_context.get('personalization_source', 'mathematical_neutral'),
+                    'market_opportunities': self._identify_personalized_market_opportunities(business_profile, market_data, personalized_context),
+                    'competitive_landscape': self._analyze_personalized_competitive_landscape(business_profile, market_data, personalized_context),
+                    'risk_assessment': self._assess_personalized_market_risks(business_profile, market_data, personalized_context),
+                    'trend_analysis': self._analyze_personalized_market_trends(market_data, personalized_context),
+                    'recommendations': self._generate_personalized_strategic_recommendations(business_profile, market_data, personalized_context),
+                    'confidence_score': self._calculate_personalized_confidence_score(business_profile, market_data, personalized_context)
                 }
                 
                 # Cache the insight
@@ -465,7 +482,491 @@ class MarketIntelligenceEngine:
             
         except Exception as e:
             logger.error(f"Error learning from analysis: {e}")
+
+    def _get_progressive_intelligence_context(self, business_profile: Dict[str, Any], 
+                                            market_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get personalized market intelligence context from Progressive Intelligence Engine
+        ZERO HARDCODED BUSINESS ASSUMPTIONS - Everything personalized to user
+        """
+        try:
+            if not self.progressive_intelligence:
+                # Fallback to user-defined patterns or mathematical neutrality
+                return self._get_user_defined_analysis_patterns(business_profile)
+            
+            # Create context for Progressive Intelligence
+            context = {
+                'request_type': 'market_intelligence_analysis',
+                'business_profile': business_profile,
+                'market_data': market_data,
+                'user_context': self.user_context,
+                'personalization_context': {
+                    'industry': business_profile.get('industry'),
+                    'business_size': business_profile.get('size', business_profile.get('business_size')),
+                    'growth_stage': business_profile.get('growth_stage'),
+                    'risk_tolerance': business_profile.get('risk_tolerance'),
+                    'market_focus': business_profile.get('market_focus'),
+                    'competitive_strategy': business_profile.get('competitive_strategy'),
+                    'user_preferences': self.user_context
+                }
+            }
+            
+            # Get Progressive Intelligence suggestions for market analysis
+            pi_suggestions = self.progressive_intelligence.get_intelligent_suggestions(context)
+            
+            if pi_suggestions:
+                # Convert PI suggestions to market intelligence patterns
+                market_patterns = self._convert_pi_to_market_patterns(pi_suggestions, business_profile)
+                logger.info("Using Progressive Intelligence personalized market analysis patterns")
+                return {
+                    'personalization_source': 'progressive_intelligence',
+                    'patterns': market_patterns,
+                    'confidence': pi_suggestions.get('confidence_scores', {}).get('overall', 0.8),
+                    'rationale': pi_suggestions.get('rationale', {})
+                }
+            
+            # Fallback to user-defined or neutral patterns
+            return self._get_user_defined_analysis_patterns(business_profile)
+            
+        except Exception as e:
+            logger.warning(f"Progressive Intelligence context lookup failed: {e}")
+            return self._get_user_defined_analysis_patterns(business_profile)
     
+    def _convert_pi_to_market_patterns(self, pi_suggestions: Dict[str, Any], business_profile: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert Progressive Intelligence suggestions to market intelligence patterns
+        Maps PI framework outputs to market analysis parameters
+        """
+        try:
+            # Extract relevant PI suggestions for market intelligence
+            patterns = {}
+            
+            # Risk profile mapping
+            if 'risk_profile' in pi_suggestions:
+                risk_info = pi_suggestions['risk_profile']
+                patterns['risk_weighting'] = risk_info.get('base_multiplier', 0.5) / 2.0  # Normalize to 0-1
+                patterns['confidence_baseline'] = min(1.0, max(0.0, risk_info.get('base_multiplier', 1.0) - 0.5))
+            
+            # Industry profile mapping
+            if 'industry_profile' in pi_suggestions:
+                industry_info = pi_suggestions['industry_profile']
+                if 'focus_dimensions' in industry_info:
+                    focus_dims = industry_info['focus_dimensions']
+                    # Convert focus dimensions to market analysis emphasis - USER DRIVEN
+                    # NO HARDCODED VALUES - Let user define their own emphasis levels
+                    for focus_dim in focus_dims:
+                        if focus_dim == 'accuracy':
+                            # Use user-defined accuracy emphasis or let them define it
+                            patterns['accuracy_weight'] = self.user_context.get('accuracy_emphasis', 
+                                                                               business_profile.get('accuracy_emphasis', 0.5))
+                        elif focus_dim == 'timeliness':
+                            patterns['trend_sensitivity'] = self.user_context.get('trend_emphasis',
+                                                                                business_profile.get('trend_emphasis', 0.5))
+                        elif focus_dim == 'completeness':
+                            patterns['comprehensive_analysis'] = self.user_context.get('completeness_emphasis',
+                                                                                     business_profile.get('completeness_emphasis', 0.5))
+            
+            # Size adjustments mapping
+            if 'size_adjustments' in pi_suggestions:
+                size_info = pi_suggestions['size_adjustments']
+                multiplier = size_info.get('suggested_multiplier', 1.0)
+                patterns['scale_factor'] = multiplier
+                patterns['opportunity_threshold'] = max(0.1, min(0.9, 1.0 - multiplier + 0.5))
+            
+            # Dimension weights mapping
+            if 'dimension_weights' in pi_suggestions:
+                weights = pi_suggestions['dimension_weights']
+                if isinstance(weights, dict):
+                    patterns.update(weights)
+            
+            # Quality thresholds mapping
+            if 'quality_thresholds' in pi_suggestions:
+                thresholds = pi_suggestions['quality_thresholds']
+                if isinstance(thresholds, dict):
+                    patterns['quality_standards'] = thresholds
+            
+            # NO HARDCODED DEFAULTS - Let user define their own patterns or use mathematical neutrality
+            # Only set patterns if user has explicitly defined them
+            user_risk_weighting = self.user_context.get('risk_weighting') or business_profile.get('risk_weighting')
+            if user_risk_weighting is not None:
+                patterns.setdefault('risk_weighting', user_risk_weighting)
+                
+            user_opp_threshold = self.user_context.get('opportunity_threshold') or business_profile.get('opportunity_threshold')  
+            if user_opp_threshold is not None:
+                patterns.setdefault('opportunity_threshold', user_opp_threshold)
+                
+            user_confidence = self.user_context.get('confidence_baseline') or business_profile.get('confidence_baseline')
+            if user_confidence is not None:
+                patterns.setdefault('confidence_baseline', user_confidence)
+                
+            user_trend_sens = self.user_context.get('trend_sensitivity') or business_profile.get('trend_sensitivity')
+            if user_trend_sens is not None:
+                patterns.setdefault('trend_sensitivity', user_trend_sens)
+            
+            return patterns
+            
+        except Exception as e:
+            logger.warning(f"Error converting PI suggestions to market patterns: {e}")
+            # Return EMPTY patterns - let calling methods handle mathematical neutrality
+            return {}
+
+    def _get_user_defined_analysis_patterns(self, business_profile: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get user-defined analysis patterns or mathematical neutral approach
+        NO DEVELOPER ASSUMPTIONS - Only user preferences or pure neutrality
+        """
+        # Check if user has defined their own market intelligence patterns
+        user_patterns = self.user_context.get('market_intelligence_patterns', {})
+        
+        if user_patterns:
+            logger.info("Using user-defined market intelligence patterns")
+            return {
+                'personalization_source': 'user_defined',
+                'patterns': user_patterns,
+                'confidence': 0.9
+            }
+        
+        # Check business profile for analysis preferences
+        profile_patterns = business_profile.get('analysis_preferences', {})
+        if profile_patterns:
+            logger.info("Using business profile analysis preferences")
+            return {
+                'personalization_source': 'business_profile',
+                'patterns': profile_patterns,
+                'confidence': 0.7
+            }
+        
+        # ULTIMATE FALLBACK: Pure mathematical approach - no assumptions about business semantics
+        # We don't assume what values should be - we return EMPTY patterns and let 
+        # each analysis method determine its own mathematical approach based on actual data
+        logger.info("Using pure mathematical approach - no assumed patterns")
+        return {
+            'personalization_source': 'mathematical_neutral',
+            'patterns': {},  # EMPTY - no assumptions about what values should be
+            'confidence': None  # NONE - confidence must be calculated from actual data
+        }
+
+    def _identify_personalized_market_opportunities(self, business_profile: Dict[str, Any], 
+                                                   market_data: Dict[str, Any], 
+                                                   personalized_context: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Identify market opportunities using personalized analysis patterns
+        NO HARDCODED ASSUMPTIONS - All analysis adapted to user's business context
+        """
+        try:
+            # Get personalized analysis patterns
+            patterns = personalized_context.get('patterns', {})
+            
+            # NO HARDCODED THRESHOLD - Use user-defined threshold or include all opportunities
+            opportunity_threshold = patterns.get('opportunity_threshold')
+            
+            # Base opportunities using existing method
+            base_opportunities = self._identify_market_opportunities(business_profile, market_data)
+            
+            # Personalize opportunity scoring based on user patterns
+            personalized_opportunities = []
+            for opp in base_opportunities:
+                personalized_score = self._calculate_personalized_opportunity_score(opp, patterns)
+                opp['personalized_score'] = personalized_score
+                opp['personalization_applied'] = personalized_context.get('personalization_source', 'neutral')
+                
+                # Only filter if user has defined a threshold, otherwise include all
+                if opportunity_threshold is None or personalized_score >= opportunity_threshold:
+                    opp['personalized_score'] = personalized_score
+                    opp['personalization_applied'] = personalized_context.get('personalization_source', 'neutral')
+                    personalized_opportunities.append(opp)
+            
+            logger.info(f"Identified {len(personalized_opportunities)} personalized opportunities (threshold: {opportunity_threshold})")
+            return personalized_opportunities
+            
+        except Exception as e:
+            logger.error(f"Error in personalized opportunity analysis: {e}")
+            # Fallback to base method
+            return self._identify_market_opportunities(business_profile, market_data)
+
+    def _analyze_personalized_competitive_landscape(self, business_profile: Dict[str, Any], 
+                                                  market_data: Dict[str, Any],
+                                                  personalized_context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze competitive landscape using personalized risk and focus patterns
+        ZERO HARDCODED BUSINESS ASSUMPTIONS - Adapted to user's competitive strategy
+        """
+        try:
+            patterns = personalized_context.get('patterns', {})
+            
+            # Base competitive analysis
+            base_analysis = self._analyze_competitive_landscape(business_profile, market_data)
+            
+            # Apply personalized risk weighting
+            risk_weighting = patterns.get('risk_weighting', 0.5)
+            
+            # Personalize competitive threat assessment
+            if 'competitive_threats' in base_analysis:
+                for threat in base_analysis['competitive_threats']:
+                    # Adjust threat severity based on user's risk tolerance
+                    original_severity = threat.get('severity', 0.5)
+                    personalized_severity = original_severity * (1 + (risk_weighting - 0.5) * 0.5)
+                    threat['personalized_severity'] = max(0.0, min(1.0, personalized_severity))
+                    threat['personalization_applied'] = personalized_context.get('personalization_source', 'neutral')
+            
+            base_analysis['personalization_metadata'] = {
+                'risk_weighting_applied': risk_weighting,
+                'personalization_source': personalized_context.get('personalization_source', 'neutral')
+            }
+            
+            return base_analysis
+            
+        except Exception as e:
+            logger.error(f"Error in personalized competitive analysis: {e}")
+            # Fallback to base method
+            return self._analyze_competitive_landscape(business_profile, market_data)
+
+    def _assess_personalized_market_risks(self, business_profile: Dict[str, Any], 
+                                        market_data: Dict[str, Any],
+                                        personalized_context: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Assess market risks using personalized risk tolerance patterns
+        NO DEVELOPER ASSUMPTIONS - Risk assessment adapted to user's risk profile
+        """
+        try:
+            patterns = personalized_context.get('patterns', {})
+            
+            # Base risk assessment
+            base_risks = self._assess_market_risks(business_profile, market_data)
+            
+            # NO HARDCODED RISK CALCULATIONS - Use user-defined risk sensitivity or passthrough
+            risk_sensitivity = patterns.get('risk_weighting')
+            
+            personalized_risks = []
+            for risk in base_risks:
+                # Only adjust risk if user has defined their risk sensitivity
+                original_severity = risk.get('severity')
+                
+                if risk_sensitivity is not None and original_severity is not None:
+                    # User-defined risk adjustment calculation
+                    risk_calculation_method = patterns.get('risk_calculation_method', 'proportional')
+                    if risk_calculation_method == 'proportional':
+                        personalized_severity = original_severity * risk_sensitivity
+                    else:
+                        # User can define their own calculation method
+                        personalized_severity = original_severity
+                else:
+                    # No personalization - use original data
+                    personalized_severity = original_severity
+                # Only set personalized_severity if we have a valid value
+                if personalized_severity is not None:
+                    risk['personalized_severity'] = max(0.0, min(1.0, personalized_severity))
+                risk['personalization_applied'] = personalized_context.get('personalization_source', 'neutral')
+                
+                personalized_risks.append(risk)
+            
+            logger.info(f"Assessed {len(personalized_risks)} risks with personalized severity (risk_sensitivity: {risk_sensitivity})")
+            return personalized_risks
+            
+        except Exception as e:
+            logger.error(f"Error in personalized risk assessment: {e}")
+            # Fallback to base method
+            return self._assess_market_risks(business_profile, market_data)
+
+    def _analyze_personalized_market_trends(self, market_data: Dict[str, Any],
+                                          personalized_context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyze market trends using personalized sensitivity patterns
+        MATHEMATICAL NEUTRALITY - No hardcoded trend interpretations
+        """
+        try:
+            patterns = personalized_context.get('patterns', {})
+            
+            # Get personalized trend sensitivity
+            trend_sensitivity = patterns.get('trend_sensitivity', 0.5)
+            
+            # Base trend analysis (using existing pattern or creating neutral one)
+            trends = market_data.get('trends', {})
+            
+            personalized_trends = {}
+            for trend_name, trend_data in trends.items():
+                if isinstance(trend_data, dict):
+                    # Apply personalized trend sensitivity
+                    # NO HARDCODED DEFAULTS - Use actual data or skip analysis
+                    original_strength = trend_data.get('strength')
+                    if original_strength is not None:
+                        # Use user-defined trend calculation or mathematical neutral multiplier
+                        trend_multiplier = patterns.get('trend_calculation_multiplier', 1.0)  # User-defined or neutral
+                        personalized_strength = original_strength * trend_sensitivity * trend_multiplier
+                    else:
+                        # Skip this trend if no strength data available - no assumptions
+                        continue
+                    
+                    personalized_trends[trend_name] = {
+                        'original_strength': original_strength,
+                        'personalized_strength': max(0.0, min(1.0, personalized_strength)),
+                        'trend_data': trend_data,
+                        'personalization_applied': personalized_context.get('personalization_source', 'neutral')
+                    }
+            
+            return {
+                'personalized_trends': personalized_trends,
+                'trend_sensitivity_applied': trend_sensitivity,
+                'personalization_metadata': {
+                    'personalization_source': personalized_context.get('personalization_source', 'neutral')
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in personalized trend analysis: {e}")
+            # Fallback to neutral trend analysis
+            return {
+                'personalized_trends': {},
+                'trend_sensitivity_applied': 0.5,
+                'personalization_metadata': {'personalization_source': 'mathematical_neutral'}
+            }
+
+    def _generate_personalized_strategic_recommendations(self, business_profile: Dict[str, Any], 
+                                                       market_data: Dict[str, Any],
+                                                       personalized_context: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Generate strategic recommendations using personalized business context
+        USER-DRIVEN RECOMMENDATIONS - No hardcoded strategic assumptions
+        """
+        try:
+            patterns = personalized_context.get('patterns', {})
+            
+            recommendations = []
+            
+            # Get user's strategic preferences or use neutral approach
+            user_strategy_focus = business_profile.get('strategy_focus', patterns.get('strategic_focus', 'balanced'))
+            
+            # Generate context-aware recommendations based on user preferences
+            if user_strategy_focus == 'growth':
+                recommendations.extend(self._generate_growth_focused_recommendations(business_profile, market_data, patterns))
+            elif user_strategy_focus == 'risk_mitigation':
+                recommendations.extend(self._generate_risk_focused_recommendations(business_profile, market_data, patterns))
+            elif user_strategy_focus == 'market_penetration':
+                recommendations.extend(self._generate_penetration_focused_recommendations(business_profile, market_data, patterns))
+            else:
+                # Balanced approach - no assumptions about what's "best"
+                recommendations.extend(self._generate_balanced_recommendations(business_profile, market_data, patterns))
+            
+            # Add personalization metadata
+            for rec in recommendations:
+                rec['personalization_applied'] = personalized_context.get('personalization_source', 'neutral')
+                rec['strategic_focus'] = user_strategy_focus
+            
+            return recommendations
+            
+        except Exception as e:
+            logger.error(f"Error generating personalized recommendations: {e}")
+            # Fallback to neutral recommendations
+            return [{
+                'type': 'neutral_analysis',
+                'description': 'Continue monitoring market conditions and adjust strategy based on emerging data',
+                'confidence': 0.5,
+                'personalization_applied': 'mathematical_neutral'
+            }]
+
+    def _calculate_personalized_confidence_score(self, business_profile: Dict[str, Any], 
+                                               market_data: Dict[str, Any],
+                                               personalized_context: Dict[str, Any]) -> float:
+        """
+        Calculate confidence score using personalized baseline patterns
+        NO HARDCODED CONFIDENCE ASSUMPTIONS - Based on user's data quality and context
+        """
+        try:
+            patterns = personalized_context.get('patterns', {})
+            
+            # Base confidence from personalized baseline
+            base_confidence = patterns.get('confidence_baseline', 0.5)
+            
+            # Adjust based on data quality and completeness
+            data_quality_factors = []
+            
+            # Business profile completeness
+            profile_completeness = len([v for v in business_profile.values() if v]) / max(1, len(business_profile))
+            data_quality_factors.append(profile_completeness)
+            
+            # Market data availability
+            market_completeness = len([v for v in market_data.values() if v]) / max(1, len(market_data))
+            data_quality_factors.append(market_completeness)
+            
+            # Progressive Intelligence confidence boost
+            pi_confidence = personalized_context.get('confidence', 0.5)
+            data_quality_factors.append(pi_confidence)
+            
+            # Calculate weighted confidence
+            avg_quality = sum(data_quality_factors) / len(data_quality_factors)
+            personalized_confidence = base_confidence * 0.6 + avg_quality * 0.4
+            
+            return max(0.0, min(1.0, personalized_confidence))
+            
+        except Exception as e:
+            logger.error(f"Error calculating personalized confidence: {e}")
+            return 0.5  # Mathematical neutral confidence
+
+    def _calculate_personalized_opportunity_score(self, opportunity: Dict[str, Any], 
+                                                patterns: Dict[str, Any]) -> float:
+        """Calculate personalized opportunity score based on user patterns"""
+        try:
+            base_score = opportunity.get('potential_impact', 0.5)
+            
+            # Apply user's risk weighting
+            risk_adjustment = patterns.get('risk_weighting', 0.5)
+            
+            # Apply user's growth focus if available
+            growth_focus = patterns.get('growth_focus_weight', 1.0)
+            
+            # Calculate personalized score
+            personalized_score = base_score * growth_focus * (1 + (risk_adjustment - 0.5) * 0.3)
+            
+            return max(0.0, min(1.0, personalized_score))
+            
+        except Exception as e:
+            logger.warning(f"Error calculating personalized opportunity score: {e}")
+            return 0.5
+
+    def _generate_growth_focused_recommendations(self, business_profile: Dict[str, Any], 
+                                              market_data: Dict[str, Any], 
+                                              patterns: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Generate growth-focused recommendations"""
+        return [{
+            'type': 'growth_strategy',
+            'description': 'Focus on high-growth market segments and expansion opportunities',
+            'confidence': patterns.get('confidence_baseline', 0.7),
+            'priority': 'high'
+        }]
+
+    def _generate_risk_focused_recommendations(self, business_profile: Dict[str, Any], 
+                                             market_data: Dict[str, Any], 
+                                             patterns: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Generate risk mitigation focused recommendations"""
+        return [{
+            'type': 'risk_mitigation',
+            'description': 'Implement risk management strategies and diversification approaches',
+            'confidence': patterns.get('confidence_baseline', 0.7),
+            'priority': 'high'
+        }]
+
+    def _generate_penetration_focused_recommendations(self, business_profile: Dict[str, Any], 
+                                                    market_data: Dict[str, Any], 
+                                                    patterns: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Generate market penetration focused recommendations"""
+        return [{
+            'type': 'market_penetration',
+            'description': 'Strengthen market position in existing segments before expanding',
+            'confidence': patterns.get('confidence_baseline', 0.7),
+            'priority': 'high'
+        }]
+
+    def _generate_balanced_recommendations(self, business_profile: Dict[str, Any], 
+                                         market_data: Dict[str, Any], 
+                                         patterns: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Generate balanced recommendations with no strategic bias"""
+        return [{
+            'type': 'balanced_approach',
+            'description': 'Maintain balanced approach across growth, risk management, and market positioning',
+            'confidence': patterns.get('confidence_baseline', 0.6),
+            'priority': 'medium'
+        }]
+
     def _create_fallback_intelligence(self) -> Dict[str, Any]:
         """Create fallback intelligence when analysis fails"""
         fallback_confidence = self._get_config_value('fallback.intelligence_confidence', 0.3)
