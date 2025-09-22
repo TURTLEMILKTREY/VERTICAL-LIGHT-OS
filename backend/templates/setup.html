@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Setup - WhatsApp Automation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #25D366;
+        }
+        
+        .form-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #25D366;
+        }
+        
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .submit-button {
+            background: #25D366;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-button:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+        }
+        
+        .help-text {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        .whatsapp-help {
+            background: #e7f3ff;
+            border: 2px solid #b3d9ff;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .whatsapp-help h4 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Setup Your WhatsApp Business Automation</h1>
+        
+        <div id="success-message" class="success-message">
+            Business setup completed successfully! Redirecting to configuration...
+        </div>
+        
+        <div id="error-message" class="error-message">
+            Setup failed. Please check your information and try again.
+        </div>
+        
+        <form id="business-setup-form">
+            <div class="form-section">
+                <h3>📊 Business Information</h3>
+                
+                <div class="form-group">
+                    <label for="business_name">Business Name</label>
+                    <input type="text" id="business_name" name="business_name" required 
+                           placeholder="e.g., Sharma's Kitchen">
+                </div>
+                
+                <div class="form-group">
+                    <label for="business_type">Business Type</label>
+                    <select id="business_type" name="business_type" required>
+                        <option value="">Select your business type</option>
+                        <option value="restaurant">Restaurant/Cafe</option>
+                        <option value="salon">Salon/Spa</option>
+                        <option value="retail">Retail Shop</option>
+                        <option value="services">Services</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="owner_name">Owner/Manager Name</label>
+                    <input type="text" id="owner_name" name="owner_name" required 
+                           placeholder="Your name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone_number">Business Phone Number</label>
+                    <input type="tel" id="phone_number" name="phone_number" required 
+                           placeholder="+91 9876543210">
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Business Address</label>
+                    <textarea id="address" name="address" rows="3" 
+                              placeholder="Full business address"></textarea>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>🕒 Business Hours</h3>
+                <p class="help-text">Set your business hours for better customer service automation</p>
+                
+                <div class="hours-grid">
+                    <div class="form-group">
+                        <label for="monday">Monday</label>
+                        <input type="text" id="monday" name="monday" value="9:00-18:00" 
+                               placeholder="9:00-18:00 or 'closed'">
+                    </div>
+                    <div class="form-group">
+                        <label for="tuesday">Tuesday</label>
+                        <input type="text" id="tuesday" name="tuesday" value="9:00-18:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="wednesday">Wednesday</label>
+                        <input type="text" id="wednesday" name="wednesday" value="9:00-18:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="thursday">Thursday</label>
+                        <input type="text" id="thursday" name="thursday" value="9:00-18:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="friday">Friday</label>
+                        <input type="text" id="friday" name="friday" value="9:00-18:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="saturday">Saturday</label>
+                        <input type="text" id="saturday" name="saturday" value="9:00-18:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="sunday">Sunday</label>
+                        <input type="text" id="sunday" name="sunday" value="closed">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>💬 WhatsApp Business Setup</h3>
+                <p class="help-text">For pilot testing, we'll use demo credentials. In production, you'll need your WhatsApp Business API access.</p>
+                
+                <div class="whatsapp-help">
+                    <h4>📝 How to get WhatsApp Business API access:</h4>
+                    <ol>
+                        <li>Create a Facebook Business account</li>
+                        <li>Set up WhatsApp Business API</li>
+                        <li>Get verified by Meta</li>
+                        <li>Obtain your API credentials</li>
+                    </ol>
+                    <p><strong>For this pilot test, we'll handle the technical setup for you!</strong></p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="whatsapp_number">WhatsApp Business Number</label>
+                    <input type="tel" id="whatsapp_number" name="whatsapp_number" 
+                           placeholder="+91 9876543210">
+                    <div class="help-text">The phone number connected to your WhatsApp Business account</div>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-button">Complete Setup & Configure Automation</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('business-setup-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                business_name: formData.get('business_name'),
+                business_type: formData.get('business_type'),
+                owner_name: formData.get('owner_name'),
+                phone_number: formData.get('phone_number'),
+                address: formData.get('address'),
+                whatsapp_number: formData.get('whatsapp_number'),
+                business_hours: {
+                    monday: formData.get('monday'),
+                    tuesday: formData.get('tuesday'),
+                    wednesday: formData.get('wednesday'),
+                    thursday: formData.get('thursday'),
+                    friday: formData.get('friday'),
+                    saturday: formData.get('saturday'),
+                    sunday: formData.get('sunday')
+                },
+                // Demo credentials for pilot testing
+                whatsapp_access_token: 'demo_token_for_pilot',
+                whatsapp_phone_number_id: 'demo_phone_id',
+                whatsapp_business_account_id: 'demo_account_id',
+                whatsapp_verify_token: 'demo_verify_token'
+            };
+            
+            try {
+                const response = await fetch('/setup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('success-message').style.display = 'block';
+                    document.getElementById('error-message').style.display = 'none';
+                    
+                    // Redirect to configuration page
+                    setTimeout(() => {
+                        window.location.href = `/configure/${result.business_id}`;
+                    }, 2000);
+                } else {
+                    document.getElementById('error-message').style.display = 'block';
+                    document.getElementById('error-message').textContent = result.error || 'Setup failed';
+                    document.getElementById('success-message').style.display = 'none';
+                }
+            } catch (error) {
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').textContent = 'Network error. Please try again.';
+                document.getElementById('success-message').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

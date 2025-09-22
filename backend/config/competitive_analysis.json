@@ -4,8 +4,8 @@
       "depth_level": "comprehensive",
       "confidence_threshold": 0.7,
       "max_competitors_tracked": 50,
-      "unknown_industry_fallback": "general_business",
-      "safe_fallback_industry": "technology"
+      "unknown_industry_fallback": "unspecified",
+      "safe_fallback_industry": "unspecified"
     },
     "monitoring": {
       "update_frequency_hours": 24,
@@ -99,7 +99,7 @@
       "low": "low"
     },
     "positioning": {
-      "default_market_position": "neutral"
+      "default_market_position": "unspecified"
     },
     "competitive_advantages": {
       "high_innovation_classification": "innovation_leader",

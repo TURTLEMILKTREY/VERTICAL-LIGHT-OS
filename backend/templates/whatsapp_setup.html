@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp API Setup - {{ config.business_name }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #25D366;
+        }
+        
+        h1 {
+            color: #25D366;
+            margin: 0;
+            font-size: 2rem;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+        
+        .status-disconnected {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .status-connected {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .setup-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #25D366;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #25D366;
+        }
+        
+        .btn {
+            background: #25D366;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #128C7E;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .help-section {
+            background: #e7f3ff;
+            border: 2px solid #b3d9ff;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .step-list {
+            margin: 1rem 0;
+        }
+        
+        .step-list li {
+            margin: 0.5rem 0;
+            padding-left: 0.5rem;
+        }
+        
+        .test-section {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff3e0;
+            border-radius: 10px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .success-message {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #d32f2f;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .webhook-info {
+            background: #f3e5f5;
+            border: 2px solid #ce93d8;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .copy-button {
+            background: #6a1b9a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        
+        .nav-links {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .nav-links a {
+            color: #25D366;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: bold;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Connect WhatsApp API</h1>
+            <p>Set up real WhatsApp Business API for {{ config.business_name }}</p>
+            <div class="status-badge {% if config.whatsapp_api_configured %}status-connected{% else %}status-disconnected{% endif %}">
+                {% if config.whatsapp_api_configured %}
+                    ✅ WhatsApp API Connected
+                {% else %}
+                    ❌ WhatsApp API Not Connected
+                {% endif %}
+            </div>
+        </div>
+
+        {% if not config.whatsapp_api_configured %}
+        <div class="setup-section">
+            <h3>📱 Step 1: Get WhatsApp Business API Credentials</h3>
+            <div class="help-section">
+                <h4>🔧 Quick Setup Guide:</h4>
+                <ol class="step-list">
+                    <li><strong>Create Meta Developer Account:</strong> Go to <a href="https://developers.facebook.com" target="_blank">developers.facebook.com</a></li>
+                    <li><strong>Create New App:</strong> Choose "Business" type and add WhatsApp product</li>
+                    <li><strong>Get API Credentials:</strong> Copy the values from your app dashboard</li>
+                    <li><strong>Set Up Webhook:</strong> Use the URL provided below</li>
+                </ol>
+                <p><strong>Need help?</strong> Follow our <a href="/docs/whatsapp-setup" target="_blank">detailed setup guide</a></p>
+            </div>
+        </div>
+
+        <div class="setup-section">
+            <h3>🔑 Step 2: Enter API Credentials</h3>
+            <form id="whatsapp-setup-form">
+                <div class="form-group">
+                    <label for="access_token">Access Token:</label>
+                    <input type="password" id="access_token" name="access_token" placeholder="EAAF..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone_number_id">Phone Number ID:</label>
+                    <input type="text" id="phone_number_id" name="phone_number_id" placeholder="123456789012345" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="business_account_id">Business Account ID:</label>
+                    <input type="text" id="business_account_id" name="business_account_id" placeholder="123456789012345" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="app_id">App ID:</label>
+                    <input type="text" id="app_id" name="app_id" placeholder="123456789012345" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="webhook_url">Your Website URL:</label>
+                    <input type="text" id="webhook_url" name="webhook_url" placeholder="https://yourwebsite.com" required>
+                </div>
+                
+                <button type="submit" class="btn">🔗 Connect WhatsApp API</button>
+            </form>
+            
+            <div class="success-message" id="success-message"></div>
+            <div class="error-message" id="error-message"></div>
+        </div>
+
+        <div class="webhook-info">
+            <h4>🔔 Webhook Configuration</h4>
+            <p><strong>Webhook URL:</strong> <span id="webhook-url-display">[Enter your website URL above]</span>/webhook</p>
+            <p><strong>Verify Token:</strong> <code>whatsapp_verify_token_2025</code> 
+               <button class="copy-button" onclick="copyToClipboard('whatsapp_verify_token_2025')">Copy</button>
+            </p>
+            <p><strong>Subscribe to:</strong> messages</p>
+        </div>
+        {% endif %}
+
+        {% if config.whatsapp_api_configured %}
+        <div class="setup-section">
+            <h3>✅ WhatsApp API Connected Successfully!</h3>
+            <p>Your business is now ready to receive and respond to WhatsApp messages automatically.</p>
+            
+            <div class="test-section">
+                <h4>🧪 Test Your Setup</h4>
+                <p>Send a WhatsApp message to your business number to test the automation:</p>
+                <ul>
+                    <li>Send "Hi" to get welcome message</li>
+                    <li>Send "menu" to see auto-response with menu</li>
+                    <li>Send "hours" to get business hours</li>
+                </ul>
+                
+                <div class="form-group">
+                    <label for="test_number">Test Phone Number (with country code):</label>
+                    <input type="text" id="test_number" placeholder="+919876543210">
+                </div>
+                
+                <div class="form-group">
+                    <label for="test_message">Test Message:</label>
+                    <input type="text" id="test_message" placeholder="Hello, testing automation!" value="Hello! This is a test message from your WhatsApp automation system.">
+                </div>
+                
+                <button onclick="sendTestMessage()" class="btn">📱 Send Test Message</button>
+            </div>
+        </div>
+        
+        <div class="setup-section">
+            <h3>📊 API Status</h3>
+            <p><strong>Phone Number ID:</strong> {{ config.whatsapp_phone_number_id }}</p>
+            <p><strong>Webhook URL:</strong> {{ config.webhook_url }}/webhook</p>
+            <p><strong>Configuration Date:</strong> {{ config.api_setup_date or 'Just now' }}</p>
+        </div>
+        {% endif %}
+
+        <div class="nav-links">
+            <a href="/configure/{{ config.business_id }}">← Back to Configuration</a>
+            <a href="/dashboard/{{ config.business_id }}">Go to Dashboard →</a>
+        </div>
+    </div>
+
+    <script>
+        // Update webhook URL display when user types
+        document.getElementById('webhook_url').addEventListener('input', function() {
+            const webhookDisplay = document.getElementById('webhook-url-display');
+            webhookDisplay.textContent = this.value || '[Enter your website URL above]';
+        });
+
+        // Handle WhatsApp setup form submission
+        document.getElementById('whatsapp-setup-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch(`/api/setup-whatsapp-api/{{ config.business_id }}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('success-message').textContent = result.message;
+                    document.getElementById('success-message').style.display = 'block';
+                    document.getElementById('error-message').style.display = 'none';
+                    
+                    // Reload page after 2 seconds to show connected state
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    document.getElementById('error-message').textContent = result.error;
+                    document.getElementById('error-message').style.display = 'block';
+                    document.getElementById('success-message').style.display = 'none';
+                }
+            } catch (error) {
+                document.getElementById('error-message').textContent = 'Network error: ' + error.message;
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('success-message').style.display = 'none';
+            }
+        });
+
+        // Send test message function
+        async function sendTestMessage() {
+            const testNumber = document.getElementById('test_number').value;
+            const testMessage = document.getElementById('test_message').value;
+            
+            if (!testNumber || !testMessage) {
+                alert('Please enter both phone number and message');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/test-whatsapp-send/{{ config.business_id }}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        to_number: testNumber,
+                        message: testMessage
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Test message sent successfully! Check your WhatsApp.');
+                } else {
+                    alert('Error sending message: ' + result.error);
+                }
+            } catch (error) {
+                alert('Network error: ' + error.message);
+            }
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>

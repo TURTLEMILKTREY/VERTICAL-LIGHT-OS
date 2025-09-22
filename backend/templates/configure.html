@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure Automation - {{ config.business_name }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f6fa;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .config-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .config-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .sidebar {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        h1, h2, h3 {
+            color: #333;
+        }
+        
+        .auto-response {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .auto-response.active {
+            border-color: #25D366;
+            background: #f0fff4;
+        }
+        
+        .toggle-switch {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 50px;
+            height: 25px;
+            background: #ccc;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #25D366;
+        }
+        
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            top: 2.5px;
+            left: 2.5px;
+            transition: 0.3s;
+        }
+        
+        .toggle-switch.active::before {
+            transform: translateX(25px);
+        }
+        
+        .keywords {
+            background: #e3f2fd;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin: 0.5rem 0;
+            font-family: monospace;
+        }
+        
+        .response-text {
+            background: #f3e5f5;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin: 0.5rem 0;
+            font-style: italic;
+        }
+        
+        .test-section {
+            background: #fff3e0;
+            border: 2px solid #ffb74d;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .test-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .test-button {
+            background: #ff9800;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .test-result {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .action-button {
+            background: #25D366;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .action-button:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+        }
+        
+        .secondary-button {
+            background: #6c757d;
+        }
+        
+        .secondary-button:hover {
+            background: #5a6268;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #25D366;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #25D366;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 WhatsApp Automation for {{ config.business_name }}</h1>
+            <p>Configure your intelligent customer service automation</p>
+            
+            {% if config.whatsapp_api_configured %}
+                <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; margin-top: 1rem;">
+                    ✅ WhatsApp API Connected - Live automation active!
+                </div>
+            {% else %}
+                <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; margin-top: 1rem;">
+                    ⚠️ WhatsApp API not connected - Responses are simulated only
+                    <br>
+                    <a href="/whatsapp-setup/{{ config.business_id }}" style="color: white; font-weight: bold; text-decoration: underline;">
+                        🔗 Connect Real WhatsApp API
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="config-grid">
+            <div class="main-content">
+                <div class="config-section">
+                    <h2>🔧 Auto-Response Configuration</h2>
+                    <p>These responses will be sent automatically when customers message keywords:</p>
+                    
+                    <div id="auto-responses">
+                        <!-- Auto-responses will be loaded here -->
+                    </div>
+                    
+                    <button class="action-button" onclick="saveAutoResponses()">
+                        💾 Save Auto-Response Settings
+                    </button>
+                </div>
+                
+                <div class="config-section">
+                    <h2>🧪 Test Your Automation</h2>
+                    <div class="test-section">
+                        <h3>Try sending a test message:</h3>
+                        <input type="text" id="test-message" class="test-input" 
+                               placeholder="Type a message like 'Hello' or 'What are your hours?'">
+                        <button class="test-button" onclick="testAutomation()">
+                            🧪 Test Response
+                        </button>
+                        <div id="test-results"></div>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h2>📝 Custom Templates</h2>
+                    <p>Create custom message templates for your business:</p>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" id="template-name" placeholder="Template name" 
+                               style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem;">
+                        <textarea id="template-content" placeholder="Template content (use {customer_name} for personalization)" 
+                                  style="width: 100%; padding: 0.5rem;" rows="3"></textarea>
+                    </div>
+                    
+                    <button class="action-button" onclick="addCustomTemplate()">
+                        ➕ Add Custom Template
+                    </button>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <h3>📊 Quick Stats</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ config.auto_responses|length }}</div>
+                        <div class="stat-label">Auto-Responses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">80%</div>
+                        <div class="stat-label">Automation Rate</div>
+                    </div>
+                </div>
+                
+                <h3>🚀 Quick Actions</h3>
+                <button class="action-button" onclick="window.open('/dashboard/{{ config.business_id }}', '_blank')">
+                    📈 View Dashboard
+                </button>
+                <button class="action-button secondary-button" onclick="exportConfiguration()">
+                    📤 Export Config
+                </button>
+                
+                <h3>💡 Tips</h3>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin-top: 1rem;">
+                    <ul style="margin: 0; padding-left: 1rem; color: #666;">
+                        <li>Keep responses friendly and helpful</li>
+                        <li>Include your business name in responses</li>
+                        <li>Test responses before going live</li>
+                        <li>Monitor customer feedback</li>
+                    </ul>
+                </div>
+                
+                <h3>📞 Support</h3>
+                <p style="color: #666; font-size: 0.9rem;">
+                    Need help? Contact our support team for assistance with setup and optimization.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="success-message" class="success-message">
+        Configuration saved successfully!
+    </div>
+
+    <script>
+        const businessId = '{{ config.business_id }}';
+        let autoResponses = {{ config.auto_responses | tojson }};
+        
+        function loadAutoResponses() {
+            const container = document.getElementById('auto-responses');
+            container.innerHTML = '';
+            
+            autoResponses.forEach((response, index) => {
+                const div = document.createElement('div');
+                div.className = `auto-response ${response.active ? 'active' : ''}`;
+                div.innerHTML = `
+                    <div class="toggle-switch ${response.active ? 'active' : ''}" 
+                         onclick="toggleResponse(${index})"></div>
+                    <h4>Auto-Response ${index + 1}</h4>
+                    <div class="keywords">
+                        <strong>Keywords:</strong> ${response.keywords.join(', ')}
+                    </div>
+                    <div class="response-text">
+                        <strong>Response:</strong> ${response.response}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function toggleResponse(index) {
+            autoResponses[index].active = !autoResponses[index].active;
+            loadAutoResponses();
+        }
+        
+        async function saveAutoResponses() {
+            try {
+                const response = await fetch(`/api/auto-responses/${businessId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(autoResponses)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccessMessage('Auto-responses saved successfully!');
+                } else {
+                    alert('Failed to save auto-responses');
+                }
+            } catch (error) {
+                alert('Error saving auto-responses');
+            }
+        }
+        
+        async function testAutomation() {
+            const message = document.getElementById('test-message').value;
+            if (!message) return;
+            
+            try {
+                const response = await fetch(`/api/test-automation/${businessId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({test_message: message})
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const resultsDiv = document.getElementById('test-results');
+                    resultsDiv.innerHTML = result.test_results.map(test => `
+                        <div class="test-result">
+                            <strong>You:</strong> ${test.input}<br>
+                            <strong>Bot:</strong> ${test.response}
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                alert('Error testing automation');
+            }
+        }
+        
+        async function addCustomTemplate() {
+            const name = document.getElementById('template-name').value;
+            const content = document.getElementById('template-content').value;
+            
+            if (!name || !content) {
+                alert('Please fill in both template name and content');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/templates/${businessId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        content: content,
+                        variables: content.match(/{([^}]+)}/g) || []
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccessMessage('Custom template added successfully!');
+                    document.getElementById('template-name').value = '';
+                    document.getElementById('template-content').value = '';
+                } else {
+                    alert('Failed to add template');
+                }
+            } catch (error) {
+                alert('Error adding template');
+            }
+        }
+        
+        function showSuccessMessage(message) {
+            const div = document.getElementById('success-message');
+            div.textContent = message;
+            div.style.display = 'block';
+            setTimeout(() => {
+                div.style.display = 'none';
+            }, 3000);
+        }
+        
+        function exportConfiguration() {
+            const config = {
+                business_name: '{{ config.business_name }}',
+                business_type: '{{ config.business_type }}',
+                auto_responses: autoResponses
+            };
+            
+            const blob = new Blob([JSON.stringify(config, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${config.business_name}_whatsapp_config.json`;
+            a.click();
+        }
+        
+        // Load auto-responses on page load
+        loadAutoResponses();
+    </script>
+</body>
+</html>

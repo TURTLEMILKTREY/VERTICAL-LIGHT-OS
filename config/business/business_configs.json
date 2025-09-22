@@ -1,0 +1,146 @@
+{
+  "business_1758530190.672879": {
+    "business_id": "business_1758530190.672879",
+    "business_name": "Varun",
+    "business_type": "restaurant",
+    "owner_name": "v",
+    "phone_number": "+91 9226017973",
+    "address": "goyaol",
+    "business_hours": {
+      "monday": "9:00-18:00",
+      "tuesday": "9:00-18:00",
+      "wednesday": "9:00-18:00",
+      "thursday": "9:00-18:00",
+      "friday": "9:00-18:00",
+      "saturday": "9:00-18:00",
+      "sunday": "closed"
+    },
+    "whatsapp_config": {
+      "access_token": "demo_token_for_pilot",
+      "phone_number_id": "demo_phone_id",
+      "business_account_id": "demo_account_id",
+      "verify_token": "demo_verify_token"
+    },
+    "auto_responses": [
+      {
+        "active": true,
+        "keywords": [
+          "hello",
+          "hi",
+          "hey"
+        ],
+        "response": "Hello! Welcome to {business_name}. How can we help you today?"
+      },
+      {
+        "active": true,
+        "keywords": [
+          "hours",
+          "open",
+          "timing"
+        ],
+        "response": "Our business hours are Monday-Saturday 9 AM to 6 PM. We're closed on Sundays."
+      },
+      {
+        "active": true,
+        "keywords": [
+          "location",
+          "address",
+          "where"
+        ],
+        "response": "You can find us at our location. Would you like directions?"
+      },
+      {
+        "active": true,
+        "keywords": [
+          "menu",
+          "food",
+          "eat"
+        ],
+        "response": "We have a delicious menu! What type of cuisine are you in the mood for?"
+      },
+      {
+        "active": true,
+        "keywords": [
+          "delivery",
+          "order"
+        ],
+        "response": "Yes, we offer delivery! What would you like to order today?"
+      }
+    ],
+    "custom_templates": [],
+    "created_at": "2025-09-22T14:06:30.672879",
+    "status": "active"
+  },
+  "business_1758531316.693107": {
+    "business_id": "business_1758531316.693107",
+    "business_name": "Varun",
+    "business_type": "restaurant",
+    "owner_name": "v",
+    "phone_number": "+91 9226017973",
+    "address": "goyaol",
+    "business_hours": {
+      "monday": "9:00-18:00",
+      "tuesday": "9:00-18:00",
+      "wednesday": "9:00-18:00",
+      "thursday": "9:00-18:00",
+      "friday": "9:00-18:00",
+      "saturday": "9:00-18:00",
+      "sunday": "closed"
+    },
+    "whatsapp_config": {
+      "access_token": "demo_token_for_pilot",
+      "phone_number_id": "demo_phone_id",
+      "business_account_id": "demo_account_id",
+      "verify_token": "demo_verify_token"
+    },
+    "auto_responses": [
+      {
+        "keywords": [
+          "hello",
+          "hi",
+          "hey"
+        ],
+        "response": "Hello! Welcome to {business_name}. How can we help you today?",
+        "active": true
+      },
+      {
+        "keywords": [
+          "hours",
+          "open",
+          "timing"
+        ],
+        "response": "Our business hours are Monday-Saturday 9 AM to 6 PM. We're closed on Sundays.",
+        "active": true
+      },
+      {
+        "keywords": [
+          "location",
+          "address",
+          "where"
+        ],
+        "response": "You can find us at our location. Would you like directions?",
+        "active": true
+      },
+      {
+        "keywords": [
+          "menu",
+          "food",
+          "eat"
+        ],
+        "response": "We have a delicious menu! What type of cuisine are you in the mood for?",
+        "active": true
+      },
+      {
+        "keywords": [
+          "delivery",
+          "order"
+        ],
+        "response": "Yes, we offer delivery! What would you like to order today?",
+        "active": true
+      }
+    ],
+    "custom_templates": [],
+    "created_at": "2025-09-22T14:25:16.693611",
+    "status": "active"
+  }
+}

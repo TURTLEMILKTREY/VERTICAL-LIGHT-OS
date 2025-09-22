@@ -76,17 +76,80 @@ class MarketIntelligenceEngine:
         # Thread safety
         self.lock = threading.RLock()
         
-        # Configuration-driven parameters
-        self.max_pattern_memory = self._get_config_value('pattern_learning.max_memory_size', 1000)
-        self.learning_rate = self._get_config_value('pattern_learning.learning_rate', 0.1)
-        self.confidence_threshold = self._get_config_value('analysis.confidence_threshold', 0.7)
-        self.pattern_similarity_threshold = self._get_config_value('analysis.similarity_threshold', 0.8)
+        # Enhanced configurability: Initialize personalized intelligence parameters with Progressive Intelligence
+        self._initialize_personalized_intelligence_parameters()
         
         # Cache management
         self.insight_cache: Dict[str, Tuple[Any, datetime]] = {}
         self.cache_ttl = timedelta(hours=self._get_config_value('cache.ttl_hours', 6))
         
-        logger.info("MarketIntelligenceEngine initialized with dynamic configuration")
+        logger.info("MarketIntelligenceEngine initialized with enhanced configurability")
+
+    def _get_progressive_intelligence_context(self, context_type: str = "intelligence_analysis") -> Dict[str, Any]:
+        """Get Progressive Intelligence context for enhanced intelligence analysis
+        
+        Args:
+            context_type: Type of Progressive Intelligence context to retrieve
+            
+        Returns:
+            Progressive Intelligence context with personalized patterns
+        """
+        if not self.progressive_intelligence:
+            return {}
+            
+        try:
+            # Prepare context for Progressive Intelligence
+            context = {
+                'service_type': 'market_intelligence',
+                'analysis_type': context_type,
+                'industry': self.user_context.get('industry', 'general'),
+                'business_size': self.user_context.get('business_size', 'medium'),
+                'market_focus': self.user_context.get('market_focus', 'general')
+            }
+            
+            pi_suggestions = self.progressive_intelligence.get_intelligent_suggestions(context)
+            
+            logger.debug(f"Retrieved Progressive Intelligence suggestions for {context_type}")
+            return pi_suggestions
+            
+        except Exception as e:
+            logger.warning(f"Failed to get Progressive Intelligence suggestions: {e}")
+            return {}
+
+    def _initialize_personalized_intelligence_parameters(self):
+        """Enhanced configurability: Initialize intelligence parameters without business assumptions"""
+        
+        # Get Progressive Intelligence suggestions for intelligence parameters
+        pi_context = self._get_progressive_intelligence_context("intelligence_parameters")
+        pi_thresholds = pi_context.get('quality_thresholds', {})
+        pi_learning = pi_context.get('dimension_weights', {}).get('learning_parameters', {})
+        
+        # Enhanced configurability: Learning parameters with PI suggestions and user override
+        suggested_max_memory = pi_learning.get('max_pattern_memory', None)
+        suggested_learning_rate = pi_learning.get('learning_rate', None)
+        suggested_confidence_threshold = pi_thresholds.get('confidence_threshold', None)
+        suggested_similarity_threshold = pi_thresholds.get('similarity_threshold', None)
+        
+        # Use PI suggestions as intelligent defaults with complete user override capability
+        # Mathematical neutral fallbacks when no user config or PI suggestion exists
+        self.max_pattern_memory = self._get_config_value(
+            'pattern_learning.max_memory_size', 
+            suggested_max_memory or 1000  # Technical limit, not business assumption
+        )
+        self.learning_rate = self._get_config_value(
+            'pattern_learning.learning_rate', 
+            suggested_learning_rate or 0.1  # Mathematical neutral fallback if no PI or user config
+        )
+        self.confidence_threshold = self._get_config_value(
+            'analysis.confidence_threshold', 
+            suggested_confidence_threshold or 0.0  # Mathematical neutral - no assumptions
+        )
+        self.pattern_similarity_threshold = self._get_config_value(
+            'analysis.similarity_threshold', 
+            suggested_similarity_threshold or 0.7  # Mathematical neutral fallback
+        )
+        
+        logger.info("Initialized personalized intelligence parameters with Progressive Intelligence enhanced configurability")
         
     def _load_intelligence_configuration(self) -> Dict[str, Any]:
         """Load intelligence engine configuration"""
@@ -124,7 +187,7 @@ class MarketIntelligenceEngine:
                     return cached_insight
                 
                 # Get Progressive Intelligence personalized analysis patterns
-                personalized_context = self._get_progressive_intelligence_context(business_profile, market_data)
+                personalized_context = self._get_progressive_intelligence_analysis_context(business_profile, market_data)
                 
                 # Generate PERSONALIZED market intelligence using user's business context
                 intelligence = {
@@ -278,7 +341,14 @@ class MarketIntelligenceEngine:
             industry_trends = market_data.get('industry_trends', {}).get(industry, {})
             
             for trend, trend_data in industry_trends.items():
-                if trend_data.get('growth_rate', 0) > self._get_config_value('opportunities.growth_threshold', 0.1):
+                # Enhanced configurability: Get Progressive Intelligence suggestion for growth threshold
+                pi_context = self._get_progressive_intelligence_context("growth_opportunities")
+                suggested_growth_threshold = pi_context.get('quality_thresholds', {}).get('growth_threshold', None)
+                
+                # Use PI suggestion with complete user override capability
+                growth_threshold = self._get_config_value('opportunities.growth_threshold', suggested_growth_threshold)
+                
+                if growth_threshold is not None and trend_data.get('growth_rate', 0) > growth_threshold:
                     opportunities.append({
                         'type': 'industry_growth',
                         'trend': trend,
@@ -290,7 +360,15 @@ class MarketIntelligenceEngine:
             target_regions = business_profile.get('target_regions', [])
             for region in target_regions:
                 region_data = market_data.get('regional_data', {}).get(region, {})
-                if region_data.get('market_penetration', 0) < self._get_config_value('opportunities.penetration_threshold', 0.3):
+                
+                # Enhanced configurability: Get Progressive Intelligence suggestion for penetration threshold
+                pi_context = self._get_progressive_intelligence_context("geographic_opportunities")
+                suggested_penetration_threshold = pi_context.get('quality_thresholds', {}).get('penetration_threshold', None)
+                
+                # Use PI suggestion with complete user override capability
+                penetration_threshold = self._get_config_value('opportunities.penetration_threshold', suggested_penetration_threshold)
+                
+                if penetration_threshold is not None and region_data.get('market_penetration', 0) < penetration_threshold:
                     opportunities.append({
                         'type': 'geographic_expansion',
                         'region': region,
@@ -330,9 +408,17 @@ class MarketIntelligenceEngine:
         risks = []
         
         try:
-            # Market volatility risks
+            # Market volatility risks - Enhanced configurability with Progressive Intelligence
             volatility = market_data.get('market_volatility', {})
-            if volatility.get('volatility_index', 0) > self._get_config_value('risk.volatility_threshold', 0.7):
+            
+            # Get Progressive Intelligence suggestion for volatility threshold
+            pi_context = self._get_progressive_intelligence_context("volatility_risks")
+            suggested_volatility_threshold = pi_context.get('quality_thresholds', {}).get('volatility_threshold', None)
+            
+            # Use PI suggestion with complete user override capability
+            volatility_threshold = self._get_config_value('risk.volatility_threshold', suggested_volatility_threshold)
+            
+            if volatility_threshold is not None and volatility.get('volatility_index', 0) > volatility_threshold:
                 risks.append({
                     'type': 'market_volatility',
                     'severity': volatility.get('volatility_index'),
@@ -483,7 +569,7 @@ class MarketIntelligenceEngine:
         except Exception as e:
             logger.error(f"Error learning from analysis: {e}")
 
-    def _get_progressive_intelligence_context(self, business_profile: Dict[str, Any], 
+    def _get_progressive_intelligence_analysis_context(self, business_profile: Dict[str, Any], 
                                             market_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Get personalized market intelligence context from Progressive Intelligence Engine
@@ -892,9 +978,18 @@ class MarketIntelligenceEngine:
             pi_confidence = personalized_context.get('confidence', 0.5)
             data_quality_factors.append(pi_confidence)
             
-            # Calculate weighted confidence
-            avg_quality = sum(data_quality_factors) / len(data_quality_factors)
-            personalized_confidence = base_confidence * 0.6 + avg_quality * 0.4
+            # Enhanced configurability: User-configurable confidence calculation weights
+            confidence_weights = self._get_config_value('confidence.calculation_weights', {
+                'base_confidence': 0.0,  # Mathematical neutral fallback
+                'quality_factors': 0.0   # Mathematical neutral fallback
+            })
+            
+            # Calculate weighted confidence without business assumptions
+            avg_quality = sum(data_quality_factors) / len(data_quality_factors) if data_quality_factors else 0.0
+            base_weight = confidence_weights.get('base_confidence', 0.0)
+            quality_weight = confidence_weights.get('quality_factors', 0.0)
+            
+            personalized_confidence = base_confidence * base_weight + avg_quality * quality_weight
             
             return max(0.0, min(1.0, personalized_confidence))
             
@@ -963,7 +1058,7 @@ class MarketIntelligenceEngine:
         return [{
             'type': 'balanced_approach',
             'description': 'Maintain balanced approach across growth, risk management, and market positioning',
-            'confidence': patterns.get('confidence_baseline', 0.6),
+            'confidence': patterns.get('confidence_baseline', 0.0),  # Mathematical neutral fallback
             'priority': 'medium'
         }]
 
@@ -997,11 +1092,11 @@ class MarketIntelligenceEngine:
             if not market_data:
                 return self._create_fallback_intelligence()
             
-            # Create a basic business profile if not provided
+            # Create a basic business profile if not provided - NO BUSINESS MODEL ASSUMPTIONS
             business_profile = market_data.get('business_profile', {
                 'industry': market_data.get('industry', 'general'),
                 'size': market_data.get('company_size', 'medium'),
-                'market_focus': market_data.get('target_market', 'b2b')
+                'market_focus': market_data.get('target_market', 'mixed')  # Neutral - no B2B/B2C assumption
             })
             
             # Use existing analyze_market_context method
@@ -1140,8 +1235,8 @@ class MarketIntelligenceEngine:
                         'type': opp_type,
                         'description': f"Dynamic {opp_type.replace('_', ' ')} opportunity",
                         'potential_score': (hash(opp_type + str(market_data)) % 100) / 100.0,
-                        'confidence': 0.6,
-                        'time_horizon': 'medium_term'
+                        'confidence': self._get_config_value('opportunities.default_confidence', 0.0),  # Mathematical neutral fallback
+                        'time_horizon': self._get_config_value('opportunities.default_timeframe', 'unspecified')
                     }
                     opportunities.append(opportunity)
             
@@ -1234,7 +1329,8 @@ class MarketIntelligenceEngine:
             
         except Exception as e:
             logger.warning(f"Error calculating opportunity score: {e}")
-            return 0.4
+            # Mathematical neutral fallback - no business assumptions
+            return 0.0
     
     def _determine_opportunity_timeframe(self, opp_type: str) -> str:
         """Determine timeframe for opportunity based on type"""
@@ -1261,18 +1357,39 @@ class MarketIntelligenceEngine:
         return base_requirements[:3]  # Limit to 3 requirements
     
     def _identify_opportunity_risks(self, opp_type: str, market_data: Dict[str, Any]) -> List[str]:
-        """Identify risks for opportunity"""
-        risk_templates = [
-            f'{opp_type}_execution_risk',
-            'market_timing_risk',
-            'competitive_response_risk'
-        ]
+        """Enhanced configurability: Dynamically generate risk categories based on user context"""
+        # Get Progressive Intelligence suggestions for risk categories
+        pi_context = self._get_progressive_intelligence_context("opportunity_risks")
+        suggested_risk_categories = pi_context.get('risk_categories', [])
         
-        # Add market-specific risks
-        if market_data.get('volatility', 0.3) > 0.6:
-            risk_templates.append('high_market_volatility_risk')
+        # Enhanced configurability: User can define custom risk categories or use PI suggestions
+        user_risk_categories = self._get_config_value('risks.custom_categories', suggested_risk_categories)
         
-        return risk_templates[:3]  # Limit to 3 risks
+        # Dynamic risk generation based on opportunity type and user goals
+        dynamic_risks = []
+        
+        if user_risk_categories:
+            # Use user-configured risk categories
+            for category in user_risk_categories[:3]:  # Respect user's risk focus
+                dynamic_risks.append(f"{category}_{opp_type}")
+        else:
+            # Generate mathematically neutral risk categories when no user config
+            dynamic_risks = [
+                f"execution_complexity_{opp_type}",
+                f"resource_requirements_{opp_type}",
+                f"market_conditions_{opp_type}"
+            ]
+        
+        # Add market condition-based risks if Progressive Intelligence suggests them
+        suggested_volatility_threshold = pi_context.get('quality_thresholds', {}).get('volatility_concern', None)
+        volatility_threshold = self._get_config_value('risks.volatility_concern_threshold', suggested_volatility_threshold)
+        
+        if (volatility_threshold is not None and 
+            market_data.get('volatility', 0) > volatility_threshold and 
+            len(dynamic_risks) < 3):
+            dynamic_risks.append('market_volatility_factor')
+        
+        return dynamic_risks[:3]  # Respect configured limit or default to 3
     
     def _assess_risks(self, market_data: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
@@ -1545,49 +1662,113 @@ class MarketIntelligenceEngine:
     
     def _recommend_budget_allocation(self, budget: Dict[str, Any], 
                                    market_data: Dict[str, Any]) -> Dict[str, float]:
-        # Simple budget allocation based on market data
+        """Enhanced configurability: Dynamic budget allocation based on user goals"""
+        # Get Progressive Intelligence suggestions for budget categories
+        pi_context = self._get_progressive_intelligence_context("budget_allocation")
+        suggested_categories = pi_context.get('budget_categories', {})
+        
         total_budget = budget.get('max', budget.get('min', 10000))
         
-        allocation = {
-            'digital_marketing': 0.4,
-            'content_creation': 0.2,
-            'paid_advertising': 0.3,
-            'analytics': 0.1
-        }
+        # Enhanced configurability: User-defined budget categories or PI suggestions
+        user_allocation = self._get_config_value('budget.allocation_categories', suggested_categories)
         
-        # Adjust based on market trends
+        if user_allocation:
+            # Use user-configured allocation categories and ratios
+            allocation = user_allocation.copy()
+        else:
+            # Mathematical neutral allocation when no user config - equal distribution
+            # Let user define their own categories rather than assuming business model
+            default_categories = self._get_config_value('budget.default_categories', [])
+            
+            if default_categories:
+                # Equal distribution across user-defined categories
+                ratio_per_category = 1.0 / len(default_categories)
+                allocation = {category: ratio_per_category for category in default_categories}
+            else:
+                # Ultimate fallback: Single generic category
+                allocation = {'resource_allocation': 1.0}
+        
+        # Dynamic adjustment based on market trends (without business assumptions)
         trends = market_data.get('trends', {})
-        if 'digital_transformation' in trends:
-            allocation['digital_marketing'] += 0.1
-            allocation['paid_advertising'] -= 0.1
+        trend_adjustments = self._get_config_value('budget.trend_adjustments', {})
+        
+        for trend, trend_data in trends.items():
+            if trend in trend_adjustments:
+                adjustment = trend_adjustments[trend]
+                if isinstance(adjustment, dict):
+                    for category, change in adjustment.items():
+                        if category in allocation:
+                            allocation[category] += change
+        
+        # Normalize to ensure total allocation equals 1.0
+        total_ratio = sum(allocation.values())
+        if total_ratio > 0:
+            allocation = {k: v/total_ratio for k, v in allocation.items()}
         
         return {channel: total_budget * ratio for channel, ratio in allocation.items()}
     
     def _recommend_channels(self, target_audience: Dict[str, Any], 
                           market_data: Dict[str, Any]) -> List[str]:
+        """Enhanced configurability: Dynamic channel recommendations based on user context"""
+        # Get Progressive Intelligence suggestions for channels
+        pi_context = self._get_progressive_intelligence_context("channel_recommendations")
+        suggested_channels = pi_context.get('recommended_channels', [])
+        
+        # Enhanced configurability: User-defined channels or PI suggestions
+        user_channels = self._get_config_value('channels.custom_mapping', {})
+        
         channels = []
         
-        age_group = target_audience.get('age_group', '')
-        if 'young' in age_group.lower() or '18-34' in age_group:
-            channels.extend(['social_media', 'influencer_marketing'])
-        elif 'middle' in age_group.lower() or '35-54' in age_group:
-            channels.extend(['email_marketing', 'linkedin'])
+        if user_channels:
+            # Use user-configured channel mapping
+            for audience_attr, channel_list in user_channels.items():
+                audience_value = target_audience.get(audience_attr, '')
+                if audience_value and isinstance(channel_list, (list, dict)):
+                    if isinstance(channel_list, dict):
+                        # Match specific values to channels
+                        for value_key, channels_for_value in channel_list.items():
+                            if value_key.lower() in str(audience_value).lower():
+                                channels.extend(channels_for_value if isinstance(channels_for_value, list) else [channels_for_value])
+                    else:
+                        channels.extend(channel_list)
+        elif suggested_channels:
+            # Use Progressive Intelligence suggestions
+            channels = suggested_channels[:5]  # Limit to reasonable number
         else:
-            channels.extend(['traditional_media', 'email_marketing'])
+            # Mathematical neutral fallback: Generic channels without business model assumptions
+            generic_channels = self._get_config_value('channels.generic_options', ['direct_engagement', 'targeted_outreach'])
+            channels = generic_channels
         
-        return channels
+        return list(set(channels))  # Remove duplicates
     
     def _calculate_budget_impact(self, budget: Dict[str, Any], 
                                market_data: Dict[str, Any]) -> float:
-        budget_amount = budget.get('max', budget.get('min', 0))
-        market_avg = market_data.get('average_budget', {}).get('industry', 50000)
+        """Enhanced configurability: Calculate budget impact without business assumptions"""
+        # Get Progressive Intelligence suggestions for budget impact calculation
+        pi_context = self._get_progressive_intelligence_context("budget_impact")
+        suggested_impact_formula = pi_context.get('impact_calculation', {})
         
-        if budget_amount > market_avg:
-            return 0.8
-        elif budget_amount > market_avg * 0.5:
-            return 0.6
-        else:
-            return 0.4
+        budget_amount = budget.get('max', budget.get('min', 0))
+        
+        # Enhanced configurability: User can define custom budget impact calculation
+        user_impact_config = self._get_config_value('budget.impact_calculation', suggested_impact_formula)
+        
+        if user_impact_config and isinstance(user_impact_config, dict):
+            # User-configured impact calculation
+            thresholds = user_impact_config.get('thresholds', {})
+            impact_values = user_impact_config.get('impact_values', {})
+            
+            for threshold_name in ['high', 'medium', 'low']:
+                threshold_value = thresholds.get(threshold_name)
+                if threshold_value and budget_amount >= threshold_value:
+                    return impact_values.get(threshold_name, 0.0)
+        
+        # Mathematical neutral fallback: Normalize budget amount to 0-1 range without assumptions
+        market_avg = market_data.get('average_budget', {}).get('industry', 1)  # Avoid division by zero
+        if market_avg > 0:
+            return min(1.0, budget_amount / market_avg)  # Simple ratio, no business assumptions
+        
+        return 0.0  # No data available, no assumptions
     
     def _calculate_channel_impact(self, target_audience: Dict[str, Any], 
                                 market_data: Dict[str, Any]) -> float:
