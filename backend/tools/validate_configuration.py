@@ -152,7 +152,7 @@ class ConfigurationSchemaValidator:
         # Map of config files to their schemas
         config_schema_map = {
             'goal_parser.json': 'goal_parser_enhanced.json',
-            'campaign_generator.json': 'campaign_generator_enhanced.json',
+            'hospital_consulting_config.json': None,  # Hospital config doesn't have a specific schema yet
             'base.json': None,  # Base config doesn't have a specific schema
         }
         

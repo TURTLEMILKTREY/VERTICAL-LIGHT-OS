@@ -1,0 +1,181 @@
+{
+  "hospital_consulting": {
+    "market_regions": {
+      "tier_1_cities": ["mumbai", "delhi", "bangalore", "chennai", "hyderabad", "pune", "ahmedabad", "kolkata"],
+      "tier_2_cities": ["indore", "bhopal", "nagpur", "coimbatore", "kochi", "chandigarh", "vadodara", "lucknow"],
+      "tier_3_cities": ["mysore", "tiruchirappalli", "salem", "vijayawada", "visakhapatnam", "ranchi", "bhubaneswar"]
+    },
+    
+    "hospital_types": {
+      "acute_care": {
+        "bed_ranges": {"small": [50, 150], "medium": [151, 300], "large": [301, 500], "super_specialty": [501, 1000]},
+        "typical_margins": {"small": 0.03, "medium": 0.05, "large": 0.07, "super_specialty": 0.10},
+        "common_service_lines": ["emergency", "general_medicine", "surgery", "obstetrics", "pediatrics"]
+      },
+      "specialty": {
+        "bed_ranges": {"cardiac": [100, 300], "cancer": [150, 400], "orthopedic": [80, 200], "neuro": [100, 250]},
+        "typical_margins": {"cardiac": 0.12, "cancer": 0.15, "orthopedic": 0.10, "neuro": 0.14},
+        "focus_areas": ["high_acuity", "complex_procedures", "advanced_technology"]
+      },
+      "critical_access": {
+        "bed_ranges": {"rural": [25, 100], "district": [101, 200]},
+        "typical_margins": {"rural": 0.02, "district": 0.04},
+        "challenges": ["staffing", "equipment", "connectivity", "referral_networks"]
+      }
+    },
+
+    "consulting_focus_areas": {
+      "financial_optimization": {
+        "revenue_cycle": {
+          "metrics": ["days_in_ar", "collection_rate", "denial_rate", "claim_processing_time"],
+          "benchmarks": {"excellent": [25, 0.95, 0.05, 7], "good": [35, 0.90, 0.08, 10], "poor": [50, 0.80, 0.15, 15]},
+          "improvement_levers": ["coding_accuracy", "prior_authorization", "claim_scrubbing", "denial_management"]
+        },
+        "cost_management": {
+          "categories": ["labor_costs", "supply_costs", "overhead_costs", "technology_costs"],
+          "typical_distribution": [0.60, 0.25, 0.10, 0.05],
+          "optimization_opportunities": ["staffing_efficiency", "vendor_negotiation", "waste_reduction", "automation"]
+        },
+        "payer_mix_optimization": {
+          "payer_types": ["government_schemes", "private_insurance", "corporate_insurance", "self_pay"],
+          "reimbursement_rates": {"government": 0.70, "private": 0.85, "corporate": 0.90, "self_pay": 1.00}
+        }
+      },
+
+      "operational_efficiency": {
+        "bed_management": {
+          "metrics": ["occupancy_rate", "alos", "bed_turnover", "discharge_delays"],
+          "benchmarks": {"excellent": [0.85, 4.5, 80, 0.10], "good": [0.75, 5.5, 65, 0.15], "poor": [0.65, 7.0, 50, 0.25]},
+          "optimization_strategies": ["predictive_analytics", "discharge_planning", "bed_allocation_algorithms"]
+        },
+        "or_optimization": {
+          "metrics": ["utilization_rate", "turnover_time", "first_case_delays", "cancellation_rate"],
+          "benchmarks": {"excellent": [0.80, 25, 0.05, 0.03], "good": [0.70, 35, 0.10, 0.06], "poor": [0.60, 50, 0.20, 0.12]},
+          "improvement_areas": ["scheduling_optimization", "supply_management", "staff_coordination", "equipment_maintenance"]
+        },
+        "emergency_department": {
+          "metrics": ["door_to_doc_time", "lwbs_rate", "avg_los", "patient_satisfaction"],
+          "benchmarks": {"excellent": [15, 0.02, 180, 0.90], "good": [30, 0.05, 240, 0.80], "poor": [60, 0.10, 360, 0.70]},
+          "optimization_focus": ["triage_efficiency", "staffing_patterns", "fast_track_protocols", "capacity_management"]
+        }
+      },
+
+      "quality_improvement": {
+        "patient_safety": {
+          "metrics": ["hai_rate", "medication_errors", "fall_rate", "pressure_ulcer_rate"],
+          "benchmarks": {"excellent": [0.02, 0.001, 0.003, 0.005], "good": [0.04, 0.003, 0.006, 0.010], "poor": [0.08, 0.008, 0.012, 0.020]},
+          "intervention_areas": ["hand_hygiene", "medication_reconciliation", "fall_prevention", "skin_care_protocols"]
+        },
+        "clinical_outcomes": {
+          "metrics": ["mortality_rate", "readmission_rate", "los_efficiency", "patient_satisfaction"],
+          "risk_adjustment": true,
+          "peer_comparison": true
+        }
+      },
+
+      "technology_optimization": {
+        "emr_optimization": {
+          "vendors": ["epic", "cerner", "allscripts", "athenahealth", "local_vendors"],
+          "optimization_areas": ["workflow_efficiency", "documentation_burden", "decision_support", "interoperability"],
+          "roi_metrics": ["time_savings", "error_reduction", "compliance_improvement", "revenue_enhancement"]
+        },
+        "automation_opportunities": {
+          "high_impact": ["appointment_scheduling", "insurance_verification", "claim_processing", "inventory_management"],
+          "medium_impact": ["patient_communication", "report_generation", "quality_reporting", "staff_scheduling"],
+          "implementation_complexity": {"low": 1, "medium": 2, "high": 3}
+        }
+      }
+    },
+
+    "indian_market_specifics": {
+      "regulatory_compliance": {
+        "nabh_standards": {
+          "patient_care": ["access", "assessment", "care_planning", "medication_management"],
+          "management": ["leadership", "information_management", "human_resources", "facility_management"],
+          "accreditation_levels": ["entry", "full", "nursing_excellence"]
+        },
+        "government_schemes": {
+          "ayushman_bharat": {
+            "coverage": 500000,
+            "beneficiaries": "bottom_40_percent",
+            "empanelment_requirements": ["minimum_infrastructure", "qualified_staff", "quality_standards"]
+          },
+          "state_schemes": {
+            "variations_by_state": true,
+            "reimbursement_delays": [30, 90, 180],
+            "documentation_requirements": "high"
+          }
+        },
+        "clinical_establishments_act": {
+          "registration_requirements": true,
+          "minimum_standards": ["infrastructure", "equipment", "manpower", "quality"],
+          "state_variations": true
+        }
+      },
+
+      "market_dynamics": {
+        "competition": {
+          "corporate_chains": ["apollo", "fortis", "max", "manipal", "narayana"],
+          "regional_players": "significant",
+          "government_facilities": "competitive_threat",
+          "pricing_pressure": "high"
+        },
+        "payment_patterns": {
+          "insurance_penetration": 0.25,
+          "out_of_pocket": 0.65,
+          "government_schemes": 0.10,
+          "collection_challenges": "significant"
+        },
+        "staffing_challenges": {
+          "doctor_shortage": "acute",
+          "nursing_shortage": "severe",
+          "skilled_technician_shortage": "moderate",
+          "retention_issues": "high"
+        }
+      },
+
+      "technology_adoption": {
+        "emr_penetration": {
+          "tier_1": 0.60,
+          "tier_2": 0.35,
+          "tier_3": 0.15
+        },
+        "digital_payment_adoption": 0.70,
+        "telemedicine_growth": "rapid",
+        "ai_ml_adoption": "early_stage"
+      }
+    },
+
+    "consulting_delivery_model": {
+      "service_tiers": {
+        "basic": {
+          "price_range_inr": [25000, 50000],
+          "delivery_method": "remote",
+          "duration_months": 3,
+          "deliverables": ["performance_dashboard", "benchmark_report", "quick_wins"],
+          "human_involvement": "minimal"
+        },
+        "standard": {
+          "price_range_inr": [75000, 150000],
+          "delivery_method": "hybrid",
+          "duration_months": 6,
+          "deliverables": ["detailed_analysis", "improvement_roadmap", "implementation_support"],
+          "human_involvement": "moderate"
+        },
+        "premium": {
+          "price_range_inr": [200000, 500000],
+          "delivery_method": "on_site_hybrid",
+          "duration_months": 12,
+          "deliverables": ["comprehensive_transformation", "change_management", "ongoing_support"],
+          "human_involvement": "high"
+        }
+      },
+
+      "success_metrics": {
+        "financial": ["revenue_increase", "cost_reduction", "margin_improvement", "roi"],
+        "operational": ["efficiency_gains", "quality_improvements", "patient_satisfaction", "staff_satisfaction"],
+        "timeframe": "90_day_quick_wins_plus_long_term"
+      }
+    }
+  }
+}
