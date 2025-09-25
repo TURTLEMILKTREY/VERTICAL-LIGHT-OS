@@ -1,0 +1,194 @@
+version: '3.8'
+
+services:
+  # Hospital Intelligence API
+  hospital-intelligence:
+    build:
+      context: .
+      dockerfile: Dockerfile.hospital
+    container_name: hospital-intelligence-api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=postgresql://hospital_user:${DB_PASSWORD}@db:5432/hospital_intelligence
+      - HOSPITAL_API_KEY=${HOSPITAL_API_KEY}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - LOG_LEVEL=INFO
+      - EMR_API_ENDPOINT=${EMR_API_ENDPOINT}
+      - FINANCE_API_ENDPOINT=${FINANCE_API_ENDPOINT}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+    volumes:
+      - hospital_logs:/app/logs
+      - hospital_data:/app/data
+      - hospital_backups:/app/backups
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    networks:
+      - hospital-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database
+  db:
+    image: postgres:14-alpine
+    container_name: hospital-database
+    environment:
+      - POSTGRES_DB=hospital_intelligence
+      - POSTGRES_USER=hospital_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - hospital_db_data:/var/lib/postgresql/data
+      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - hospital_db_backups:/backups
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - hospital-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hospital_user -d hospital_intelligence"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    command: >
+      postgres 
+      -c log_statement=all
+      -c log_destination=stderr
+      -c log_line_prefix='%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
+      -c log_checkpoints=on
+      -c log_connections=on
+      -c log_disconnections=on
+      -c log_lock_waits=on
+      -c shared_preload_libraries=pg_stat_statements
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+
+  # Redis for caching (optional but recommended)
+  redis:
+    image: redis:7-alpine
+    container_name: hospital-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - hospital_redis_data:/data
+    restart: unless-stopped
+    networks:
+      - hospital-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+
+  # Nginx reverse proxy (production setup)
+  nginx:
+    image: nginx:alpine
+    container_name: hospital-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/hospital.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - hospital_logs:/var/log/nginx
+    depends_on:
+      - hospital-intelligence
+    restart: unless-stopped
+    networks:
+      - hospital-network
+
+  # Monitoring with Prometheus (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: hospital-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - hospital_prometheus_data:/prometheus
+    restart: unless-stopped
+    networks:
+      - hospital-network
+    profiles:
+      - monitoring
+
+  # Grafana for dashboards (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: hospital-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    volumes:
+      - hospital_grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    restart: unless-stopped
+    networks:
+      - hospital-network
+    profiles:
+      - monitoring
+
+  # Database backup service
+  db-backup:
+    image: postgres:14-alpine
+    container_name: hospital-db-backup
+    environment:
+      - POSTGRES_USER=hospital_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=hospital_intelligence
+      - BACKUP_SCHEDULE=0 2 * * *  # Daily at 2 AM
+    volumes:
+      - hospital_db_backups:/backups
+      - ./scripts/backup.sh:/backup.sh
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - hospital-network
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "while true; do
+        echo 'Creating database backup...'
+        pg_dump -h db -U hospital_user -d hospital_intelligence | gzip > /backups/hospital_backup_$(date +%Y%m%d_%H%M%S).sql.gz
+        # Keep only last 30 days of backups
+        find /backups -name '*.sql.gz' -mtime +30 -delete
+        echo 'Backup complete. Sleeping for 24 hours...'
+        sleep 86400
+      done"
+
+networks:
+  hospital-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  hospital_db_data:
+    driver: local
+  hospital_redis_data:
+    driver: local
+  hospital_logs:
+    driver: local
+  hospital_data:
+    driver: local
+  hospital_backups:
+    driver: local
+  hospital_db_backups:
+    driver: local
+  hospital_prometheus_data:
+    driver: local
+  hospital_grafana_data:
+    driver: local

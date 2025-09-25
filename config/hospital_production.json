@@ -1,0 +1,310 @@
+{
+  "hospital_deployment": {
+    "name": "Single Hospital Production Deployment",
+    "version": "1.0.0",
+    "environment": "production",
+    "deployment_type": "single_hospital"
+  },
+  
+  "hospital_info": {
+    "name": "Memorial Hospital",
+    "type": "General Acute Care",
+    "size": "Medium (200-400 beds)",
+    "location": "Urban",
+    "established_year": 2010,
+    "emr_system": "Epic",
+    "financial_system": "SAP"
+  },
+  
+  "database": {
+    "type": "postgresql",
+    "host": "localhost",
+    "port": 5432,
+    "database": "hospital_intelligence",
+    "user": "hospital_user",
+    "password": "${DATABASE_PASSWORD}",
+    "pool_size": 10,
+    "connection_timeout": 30,
+    "enable_ssl": true,
+    "backup_enabled": true,
+    "backup_schedule": "daily"
+  },
+  
+  "api": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "workers": 4,
+    "timeout": 30,
+    "max_request_size": 10485760,
+    "cors_origins": [
+      "https://hospital.internal",
+      "https://localhost:3000"
+    ],
+    "trusted_hosts": [
+      "localhost",
+      "127.0.0.1", 
+      "hospital.internal",
+      "*.hospital.local"
+    ]
+  },
+  
+  "security": {
+    "api_key": "${HOSPITAL_API_KEY}",
+    "enable_https": true,
+    "session_timeout": 3600,
+    "rate_limiting": {
+      "enabled": true,
+      "max_requests_per_minute": 100,
+      "max_requests_per_hour": 1000
+    },
+    "input_validation": {
+      "enabled": true,
+      "strict_mode": true,
+      "sanitize_inputs": true
+    },
+    "audit_logging": {
+      "enabled": true,
+      "log_all_requests": true,
+      "retention_days": 2555
+    }
+  },
+  
+  "hipaa_compliance": {
+    "enabled": true,
+    "encryption": {
+      "encrypt_at_rest": true,
+      "encrypt_in_transit": true,
+      "key_rotation_days": 90
+    },
+    "audit_trail": {
+      "enabled": true,
+      "log_data_access": true,
+      "log_modifications": true,
+      "retention_years": 6
+    },
+    "data_privacy": {
+      "anonymize_logs": true,
+      "mask_sensitive_fields": true,
+      "phi_detection": true
+    }
+  },
+  
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "handlers": {
+      "file": {
+        "enabled": true,
+        "filename": "hospital_intelligence.log",
+        "max_size_mb": 100,
+        "backup_count": 5,
+        "rotation": "size"
+      },
+      "console": {
+        "enabled": true,
+        "colorized": false
+      },
+      "syslog": {
+        "enabled": false,
+        "facility": "local0"
+      }
+    }
+  },
+  
+  "monitoring": {
+    "health_checks": {
+      "enabled": true,
+      "interval_seconds": 30,
+      "endpoints": [
+        "/health",
+        "/health/database",
+        "/health/analysis-engine"
+      ]
+    },
+    "metrics": {
+      "enabled": true,
+      "collection_interval": 60,
+      "retention_days": 30,
+      "track_performance": true,
+      "track_usage": true
+    },
+    "alerting": {
+      "enabled": true,
+      "email_alerts": true,
+      "slack_webhook": "${SLACK_WEBHOOK_URL}",
+      "thresholds": {
+        "response_time_ms": 2000,
+        "error_rate_percent": 5,
+        "cpu_percent": 80,
+        "memory_percent": 85,
+        "disk_percent": 90
+      }
+    }
+  },
+  
+  "analysis_engine": {
+    "lifecycle_benchmarking": {
+      "enabled": true,
+      "hospital_age_primary_factor": true,
+      "stage_classification": {
+        "startup": {"min_age": 0, "max_age": 5},
+        "growth": {"min_age": 3, "max_age": 15},
+        "expansion": {"min_age": 10, "max_age": 25}, 
+        "maturity": {"min_age": 20, "max_age": 40},
+        "established": {"min_age": 35, "max_age": 200}
+      },
+      "velocity_tiers": ["BREAKTHROUGH", "ACCELERATING", "STEADY", "SLOW", "DECLINING"],
+      "confidence_threshold": 0.7
+    },
+    "performance_optimization": {
+      "caching_enabled": true,
+      "cache_ttl_minutes": 60,
+      "parallel_processing": true,
+      "max_concurrent_analyses": 10
+    }
+  },
+  
+  "integration": {
+    "emr_system": {
+      "type": "Epic",
+      "api_endpoint": "${EMR_API_ENDPOINT}",
+      "api_key": "${EMR_API_KEY}",
+      "timeout_seconds": 30,
+      "retry_attempts": 3,
+      "data_sync_interval": "hourly"
+    },
+    "financial_system": {
+      "type": "SAP",
+      "api_endpoint": "${FINANCE_API_ENDPOINT}",
+      "api_key": "${FINANCE_API_KEY}",
+      "timeout_seconds": 30,
+      "retry_attempts": 3,
+      "data_sync_interval": "daily"
+    },
+    "notification_system": {
+      "email": {
+        "enabled": true,
+        "smtp_server": "${SMTP_SERVER}",
+        "smtp_port": 587,
+        "username": "${SMTP_USERNAME}",
+        "password": "${SMTP_PASSWORD}"
+      },
+      "webhooks": {
+        "enabled": true,
+        "analysis_complete": "${ANALYSIS_WEBHOOK_URL}",
+        "system_alerts": "${ALERT_WEBHOOK_URL}"
+      }
+    }
+  },
+  
+  "backup_and_recovery": {
+    "database_backup": {
+      "enabled": true,
+      "schedule": "0 2 * * *",
+      "retention_days": 30,
+      "backup_location": "/backups/database",
+      "compression": true,
+      "encryption": true
+    },
+    "log_backup": {
+      "enabled": true,
+      "schedule": "0 3 * * 0",
+      "retention_weeks": 12,
+      "backup_location": "/backups/logs"
+    },
+    "disaster_recovery": {
+      "enabled": true,
+      "backup_server": "${BACKUP_SERVER_URL}",
+      "replication_enabled": false,
+      "recovery_time_objective_hours": 4,
+      "recovery_point_objective_hours": 1
+    }
+  },
+  
+  "deployment": {
+    "container": {
+      "image": "hospital-intelligence:1.0.0",
+      "registry": "hospital.registry.internal",
+      "pull_policy": "Always"
+    },
+    "environment_variables": {
+      "ENVIRONMENT": "production",
+      "DATABASE_URL": "${DATABASE_URL}",
+      "HOSPITAL_API_KEY": "${HOSPITAL_API_KEY}",
+      "ENCRYPTION_KEY": "${ENCRYPTION_KEY}",
+      "LOG_LEVEL": "INFO"
+    },
+    "resource_limits": {
+      "cpu_cores": 4,
+      "memory_gb": 8,
+      "disk_gb": 100
+    },
+    "scaling": {
+      "min_instances": 1,
+      "max_instances": 3,
+      "cpu_threshold": 70,
+      "memory_threshold": 80
+    }
+  },
+  
+  "compliance": {
+    "regulatory_requirements": [
+      "HIPAA",
+      "HITECH",
+      "Joint Commission",
+      "CMS"
+    ],
+    "data_governance": {
+      "data_classification": true,
+      "access_controls": true,
+      "data_lineage": true,
+      "privacy_by_design": true
+    },
+    "reporting": {
+      "compliance_dashboard": true,
+      "audit_reports": true,
+      "risk_assessments": true,
+      "incident_tracking": true
+    }
+  },
+  
+  "testing": {
+    "automated_testing": {
+      "unit_tests": true,
+      "integration_tests": true,
+      "api_tests": true,
+      "security_tests": true
+    },
+    "performance_testing": {
+      "load_testing": true,
+      "stress_testing": true,
+      "baseline_response_time_ms": 1000,
+      "max_acceptable_response_time_ms": 2000
+    },
+    "data_validation": {
+      "input_validation": true,
+      "business_rule_validation": true,
+      "data_quality_scoring": true
+    }
+  },
+  
+  "support": {
+    "technical_support": {
+      "contact_email": "support@hospital.internal",
+      "escalation_phone": "+1-555-HOSPITAL",
+      "response_time_hours": 4,
+      "availability": "24/7"
+    },
+    "documentation": {
+      "user_manual": true,
+      "api_documentation": true,
+      "troubleshooting_guide": true,
+      "training_materials": true
+    },
+    "maintenance": {
+      "scheduled_maintenance_window": "Sunday 02:00-04:00",
+      "update_frequency": "monthly",
+      "security_patches": "as_needed"
+    }
+  }
+}

@@ -22,6 +22,7 @@ class HospitalTier(str, Enum):
 class HospitalType(str, Enum):
     ACUTE_CARE = "acute_care"
     SPECIALTY = "specialty"
+    MULTI_SPECIALTY = "multi_specialty"      # ← ADDED: Very common in India
     SUPER_SPECIALTY = "super_specialty"
     CRITICAL_ACCESS = "critical_access"
     TEACHING = "teaching"

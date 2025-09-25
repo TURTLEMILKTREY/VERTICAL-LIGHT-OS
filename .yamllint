@@ -1,0 +1,40 @@
+---
+extends: default
+
+rules:
+  # Line Length
+  line-length:
+    max: 100
+    level: warning
+
+  # Indentation
+  indentation:
+    spaces: 2
+    indent-sequences: true
+
+  # Comments
+  comments:
+    min-spaces-from-content: 1
+
+  # Document markers
+  document-start:
+    present: true
+
+  # Truthy values
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no']
+    check-keys: true
+
+  # Empty values
+  empty-values:
+    forbid-in-block-mappings: true
+    forbid-in-flow-mappings: true
+
+# File patterns to ignore
+ignore: |
+  .github/
+  .venv/
+  venv/
+  node_modules/
+  *.min.yaml
+  *.min.yml

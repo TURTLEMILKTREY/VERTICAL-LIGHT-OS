@@ -1,0 +1,86 @@
+Hospital Intelligence System - Database Setup Guide
+==================================================
+
+PRODUCTION DATABASE SETUP INSTRUCTIONS
+=====================================
+
+You need to install PostgreSQL for real database integration testing.
+
+OPTION 1: Docker + PostgreSQL (Recommended)
+==========================================
+
+1. Install Docker Desktop:
+   - Download from: https://www.docker.com/products/docker-desktop/
+   - Install Docker Desktop for Windows
+   - Restart your computer after installation
+   - Verify: Open PowerShell and run "docker --version"
+
+2. Once Docker is installed, run our setup script:
+   .\setup_test_database.bat
+
+OPTION 2: Direct PostgreSQL Installation
+=======================================
+
+1. Download PostgreSQL:
+   - Go to: https://www.postgresql.org/download/windows/
+   - Download PostgreSQL 14 or later
+   - Run the installer
+
+2. During installation:
+   - Set password for 'postgres' user (remember this!)
+   - Use default port 5432
+   - Install Stack Builder components if asked
+
+3. After installation:
+   - Add PostgreSQL bin folder to your PATH
+   - Usually: C:\Program Files\PostgreSQL\14\bin
+
+4. Create test database:
+   - Open Command Prompt as Administrator
+   - Run: createdb -U postgres hospital_test
+   - Enter password when prompted
+
+5. Set environment variable:
+   - Run: set DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/hospital_test
+   - Replace YOUR_PASSWORD with your PostgreSQL password
+
+OPTION 3: Cloud Database (Alternative)
+=====================================
+
+If you prefer cloud database:
+1. Create account at: https://www.elephantsql.com/ (free tier)
+2. Create a database instance
+3. Copy the connection URL
+4. Set: set DATABASE_URL=your_elephantsql_url
+
+QUICK INSTALL COMMANDS
+=====================
+
+Open PowerShell as Administrator and run:
+
+# Install Chocolatey (Windows package manager)
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# Install PostgreSQL via Chocolatey
+choco install postgresql14
+
+# Install Docker Desktop via Chocolatey  
+choco install docker-desktop
+
+VERIFICATION STEPS
+=================
+
+After installation, verify by running:
+1. docker --version
+2. psql --version
+3. python test_production_integration.py
+
+NEXT STEPS
+=========
+
+Once you have PostgreSQL installed:
+1. Run our database setup script
+2. Execute the production integration tests
+3. Verify all database operations work correctly
+
+Choose your preferred option above and let me know when you're ready to proceed!

@@ -1,0 +1,84 @@
+HOSPITAL INTELLIGENCE SYSTEM - DATABASE INSTALLATION
+==================================================
+
+STEP 1: Install PostgreSQL
+==========================
+
+Manual Installation (Recommended):
+1. Go to https://www.postgresql.org/download/windows/
+2. Download PostgreSQL 14 or later
+3. Run the installer
+4. During installation:
+   - Set password for 'postgres' user: testpass
+   - Use default port: 5432  
+   - Install all components
+   - Add to PATH when asked
+
+STEP 2: Install Docker (Optional but recommended)
+===============================================
+
+1. Go to https://www.docker.com/products/docker-desktop/
+2. Download Docker Desktop for Windows
+3. Install and restart computer
+
+STEP 3: Create Test Database
+===========================
+
+Open Command Prompt and run:
+createdb -U postgres hospital_test
+
+Enter password: testpass
+
+STEP 4: Set Environment Variable
+==============================
+
+In Command Prompt, run:
+set DATABASE_URL=postgresql://postgres:testpass@localhost:5432/hospital_test
+
+Or permanently set it:
+setx DATABASE_URL "postgresql://postgres:testpass@localhost:5432/hospital_test"
+
+STEP 5: Test Installation
+========================
+
+Run these commands to verify:
+psql --version
+docker --version (if installed)
+
+STEP 6: Run Database Integration Tests
+====================================
+
+cd E:\VERTICAL-LIGHT-OS\backend
+python test_production_integration.py
+
+ALTERNATIVE: Chocolatey Installation
+===================================
+
+If you have Chocolatey installed, run as Administrator:
+choco install postgresql14 -y --params "/Password:testpass"
+choco install docker-desktop -y
+
+TROUBLESHOOTING
+==============
+
+If PostgreSQL commands not found:
+- Add to PATH: C:\Program Files\PostgreSQL\14\bin
+
+If database creation fails:
+- Start PostgreSQL service
+- Use pgAdmin to create database manually
+
+If connection fails:
+- Check PostgreSQL service is running
+- Verify password is correct
+- Check port 5432 is not blocked
+
+READY TO PROCEED?
+================
+
+Once PostgreSQL is installed:
+1. Set the environment variable
+2. Create the test database  
+3. Run: python test_production_integration.py
+
+Let me know when you have PostgreSQL installed!
