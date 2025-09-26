@@ -10,8 +10,8 @@ enterprise and local business services to coexist in the same platform.
 from .tier_config import BusinessTier, TierConfigManager, LOCAL_CONFIG, ENTERPRISE_CONFIG
 
 __all__ = [
-    'BusinessTier',
-    'TierConfigManager', 
-    'LOCAL_CONFIG',
-    'ENTERPRISE_CONFIG'
+ 'BusinessTier',
+ 'TierConfigManager', 
+ 'LOCAL_CONFIG',
+ 'ENTERPRISE_CONFIG'
 ]
